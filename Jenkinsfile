@@ -1,10 +1,9 @@
-pipeline { 
+pipeline {
     agent any
-
-    stages {
-        stage('Hello') {
+        stage('Build') {
             steps {
-                echo 'Hello World'
+                sh 'pip install -r requirements.txt'
+                sh 'python manage.py test'
             }
         }
     }
