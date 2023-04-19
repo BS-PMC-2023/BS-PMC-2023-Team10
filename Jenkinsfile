@@ -22,7 +22,12 @@ pipeline {
             }
         }
         stage('Test') {
-            agent none
+            agent {
+                docker {
+                    image 'python:3'
+                    reuseNode true
+                }
+            }
             steps {
                 sh 'python manage.py test'
             }
