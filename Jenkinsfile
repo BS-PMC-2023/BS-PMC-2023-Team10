@@ -1,8 +1,5 @@
 pipeline {
     agent any
-    environment {
-    PATH = "$PATH:${WORKSPACE}"
-    }
     stages {
         stage('Build') {
             agent {
