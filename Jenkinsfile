@@ -7,7 +7,9 @@ pipeline {
     stages {
         stage('Build') {
             agent {
-                reuseNode true
+                docker {
+                    reuseNode true
+                }
             }
             steps {
                 sh """
@@ -25,7 +27,9 @@ pipeline {
         }
         stage('Test') {
             agent {
-                reuseNode true
+                docker {
+                    reuseNode true
+                }
             }
             steps {
                 sh 'python manage.py test'
