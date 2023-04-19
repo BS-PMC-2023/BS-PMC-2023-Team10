@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-                 sh """
+                sh """
                     pwd
                     id
                     env | sort
@@ -22,8 +22,9 @@ pipeline {
             }
         }
         stage('Test') {
+            agent none
             steps {
-                 sh 'python manage.py test'
+                sh 'python manage.py test'
             }
         }
     }
