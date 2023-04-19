@@ -1,11 +1,13 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3'
+        }
+    }
     stages {
         stage('Build') {
             agent {
-                docker {
-                    image 'python:3'
-                }
+                reuseNode true
             }
             steps {
                 sh """
@@ -23,10 +25,7 @@ pipeline {
         }
         stage('Test') {
             agent {
-                docker {
-                    image 'python:3'
-                    reuseNode true
-                }
+                reuseNode true
             }
             steps {
                 sh 'python manage.py test'
