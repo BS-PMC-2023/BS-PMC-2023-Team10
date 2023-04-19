@@ -8,7 +8,17 @@ pipeline {
                 }
             }
             steps {
-                export HOME=${WORKSPACE} sh 'pip install -r requirements.txt'
+                 sh """
+                    pwd
+                    id
+                    env | sort
+                    
+                    ls -la
+                """
+                sh """
+                    export HOME=${WORKSPACE}
+                    pip install -r requirements.txt --user
+                """
             }
         }
         stage('Test') {
