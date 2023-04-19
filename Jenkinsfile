@@ -8,7 +8,7 @@ pipeline {
                 }
             }
             steps {
-               pip install -r requirements.txt --user
+               sh pip install -r requirements.txt
             }
         }
         stage('Test') {
