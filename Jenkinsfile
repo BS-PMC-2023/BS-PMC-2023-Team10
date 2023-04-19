@@ -8,8 +8,7 @@ pipeline {
                 }
             }
             steps {
-                export HOME=${WORKSPACE}
-                sh 'pip install -r requirements.txt'
+               export HOME=/var/jenkins_home/jobs/Team-10/jobs/Team10/branches/main/workspace pip install -r requirements.txt --user
             }
         }
         stage('Test') {
