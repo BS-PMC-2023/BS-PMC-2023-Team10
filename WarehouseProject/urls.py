@@ -1,8 +1,7 @@
-"""
-URL configuration for WarehouseProject project.
+"""WarehouseProject URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/4.2/topics/http/urls/
+    https://docs.djangoproject.com/en/4.1/topics/http/urls/
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -15,8 +14,13 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
-
+from django.urls import path, include
+from user import views as user_view
+from django.contrib.auth import views as auth_views
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('', include('dashboard.urls')),
+    path('register/',user_view.register,name='user_register'),
+    path('',auth_views.LoginView.as_view(template_name='user/login.html'),name='user_login'),
+    path('logout/',auth_views.LogoutView.as_view(template_name='user/logout.html'),name='user_logout'),
 ]
