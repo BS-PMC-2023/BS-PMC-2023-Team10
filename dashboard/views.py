@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
-
+from django.http import HttpResponse
+from .models import Product
 # Create your views here.
 
 @login_required(login_url='user_login')
