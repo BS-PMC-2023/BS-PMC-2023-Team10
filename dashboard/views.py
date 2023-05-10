@@ -41,6 +41,7 @@ def product_delete(request, pk):
     return render(request,'dashboard/product_delete.html')
 
 
+@login_required(login_url='user-login')
 def product_edit(request, pk):
     item = Product.objects.get(id=pk)
     if request.method == 'POST':
