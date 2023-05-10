@@ -8,12 +8,21 @@ CATEGORY = (
     ('Electronics','Electronics'),
     )
 
+DAYS_TO_LOAN = (
+    ('1-2 Days','1-2 Days'),
+    ('3 Days - 1 Week','3 Days - 1 Week'),
+    ('1 Week - 2 Weeks','1 Week - 2 Weeks'),
+    ('Other','Other'),
+    )
+
+
 
 class Product(models.Model):
     name = models.CharField(max_length=100,null=True)
     sn = models.PositiveIntegerField(null=True,name='Serial Number')
     category = models.CharField(max_length=100,choices=CATEGORY,null=True)
     quantity = models.PositiveIntegerField(null=True)
+    days = models.CharField(max_length=100,choices=DAYS_TO_LOAN,null=True,name='Days To Loan',default='1-2 Days')
 
     def __str__(self):
         return f'{self.name}-{self.quantity}'

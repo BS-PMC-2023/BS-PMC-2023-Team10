@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'dashboard.apps.DashboardConfig',
-    # 'user.apps.UserConfig',
+    'user.apps.UserConfig',
     'crispy_forms',
     'crispy_bootstrap4',
     'phonenumber_field',
@@ -143,5 +143,9 @@ STATICFILES_DIRS=[
     ]
 
 STATIC_ROOT=(BASE_DIR/"asert/")
+
+MEDIA_ROOT = (BASE_DIR/'media')
+
+MEDIA_URL = '/media/'
 
 LOGIN_REDIRECT_URL = 'dashboard-index'
