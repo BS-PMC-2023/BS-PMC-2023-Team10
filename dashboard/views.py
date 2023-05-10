@@ -1,8 +1,11 @@
 from django.shortcuts import render,redirect
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Product
+from .models import Product,Order
 from .forms import ProductForm
+from .resources import ProductResource,OrderResource
+import csv
+from django.views import View
 # Create your views here.
 
 @login_required(login_url='user_login')
@@ -56,3 +59,23 @@ def product_edit(request, pk):
 def order(request):
     return render(request,'dashboard/order.html')
 
+
+class ExportDataView(View):
+    def get(self, request):
+        products = Product.objects.all()
+        product_resource = ProductResource()
+        dataset = product_resource.export(products)
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="products.csv"'
+        return response
+    
+
+
+class ExportOrderView(View):
+    def get(self, request):
+        orders = Order.objects.all()
+        orders_resource = OrderResource()
+        dataset = orders_resource.export(orders)
+        response = HttpResponse(dataset.csv, content_type='text/csv')
+        response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+        return response
