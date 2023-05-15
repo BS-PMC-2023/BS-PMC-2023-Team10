@@ -6,6 +6,7 @@ from .forms import ProductForm
 from .resources import ProductResource,OrderResource
 import csv
 from django.views import View
+from django.contrib.auth.models import User
 # Create your views here.
 
 @login_required(login_url='user_login')
@@ -14,7 +15,20 @@ def index(request):
 
 @login_required(login_url='user_login')
 def staff(request):
-    return render(request,'dashboard/staff.html')
+    workers = User.objects.all()
+    context = {
+        'workers':workers
+    }
+
+    return render(request,'dashboard/staff.html',context)
+
+@login_required(login_url='user_login')
+def staff_detail(request,pk):
+    workers = User.objects.get(id=pk)
+    context = {
+        'workers':workers,
+    }
+    return render(request, 'dashboard/staff_detail.html',context)
 
 @login_required(login_url='user_login')
 def product(request):
@@ -33,6 +47,8 @@ def product(request):
         }
     return render(request,'dashboard/product.html',context)
 
+
+@login_required(login_url='user_login')
 def product_delete(request, pk):
     item = Product.objects.get(id=pk)
     if request.method=='POST':
@@ -58,7 +74,11 @@ def product_edit(request, pk):
 
 @login_required(login_url='user_login')
 def order(request):
-    return render(request,'dashboard/order.html')
+    orders = Order.objects.all()
+    context = {
+        'orders':orders,
+    }
+    return render(request,'dashboard/order.html',context)
 
 
 class ExportDataView(View):

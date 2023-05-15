@@ -12,22 +12,24 @@
             <table class="table bg-white">
                 <thead class="bg-primary">
                     <tr class="text-white">
-                        <th scope="col">#</th>
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Order by</th>
+                        <th scope="col">Date</th>
                         <th scope="col">
                             <a href="{% url 'exportOrders' %}" class="btn btn-dark btn-sm">Export Orders</a>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for order in orders %}
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Camera</td>
-                        <td>1</td>
-                        <td>admin</td>
+                        <td>{{order.product}}</td>
+                        <td>{{order.quantity}}</td>
+                        <td>{{order.staff.username}}</td>
+                        <td>{{order.date}}</td>
                     </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
