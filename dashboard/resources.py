@@ -7,7 +7,7 @@ from datetime import datetime
 class ProductResource(resources.ModelResource):
     class Meta:
         model = Product
-        fields = ('name', 'category', 'quantity')
+        fields = ('name', 'category', 'sn', 'quantity', 'days')
 
 
 class OrderResource(resources.ModelResource):
