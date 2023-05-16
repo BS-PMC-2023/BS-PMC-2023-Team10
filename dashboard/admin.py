@@ -1,5 +1,7 @@
+from asyncio import ProactorEventLoop
 from django.contrib import admin
 from .models import Product,Order
+from django.contrib.auth.models import Group
 from import_export.admin import ExportActionMixin
 from import_export import resources
 from django.contrib.auth.models import User
@@ -8,7 +10,7 @@ from django.contrib.auth.admin import UserAdmin
 admin.site.site_header = 'Communication Warehouse Admin Panel'
 
 class ProductsAdmin(ExportActionMixin,admin.ModelAdmin):
-    list_display = ('name','category','quantity','Days To Loan','Serial Number')
+    list_display = ('name','category','quantity','days','sn')
     list_filter = ('category',)
 
 class OrderAdmin(ExportActionMixin,admin.ModelAdmin):
