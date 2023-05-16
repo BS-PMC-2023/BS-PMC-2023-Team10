@@ -1,7 +1,5 @@
-from asyncio import ProactorEventLoop
 from django.contrib import admin
 from .models import Product,Order
-from django.contrib.auth.models import Group
 from import_export.admin import ExportActionMixin
 from import_export import resources
 from django.contrib.auth.models import User
