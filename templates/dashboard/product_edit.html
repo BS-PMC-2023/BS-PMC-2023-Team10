@@ -7,11 +7,11 @@
     <div class="col-md-6 offset-md-3 p-3 bg-white">
         <h3>Edit Item</h3>
         <hr>
-        <form>
+        <form form method="POST">
             {% csrf_token %}
             {{ form|crispy }}
-            <a class="btn btn-secondary btn-sm" href="{% url 'dashboard-product' %}">Cancel</a>
-            <input class="btn btn-info btn-sm" type="submit" value="Confirm">
+            <input class="btn btn-success" type="submit" value="Confirm">
+            <a class="btn btn-secondary" href="{% url 'dashboard-product' %}">Cancel</a>
         </form>
     </div>
 </div>

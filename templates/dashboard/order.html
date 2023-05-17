@@ -12,41 +12,24 @@
             <table class="table bg-white">
                 <thead class="bg-primary">
                     <tr class="text-white">
-                        <th scope="col">#</th>
                         <th scope="col">Product</th>
-                        <th scope="col">Category</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Order by</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">
+                            <a href="{% url 'exportOrders' %}" class="btn btn-dark btn-sm">Export Orders</a>
+                        </th>
                     </tr>
                 </thead>
                 <tbody>
+                    {% for order in orders %}
                     <tr>
-                        <th scope="row">1</th>
-                        <td>Mark</td>
-                        <td>Otto</td>
-                        <td>@mdo</td>
-                        <td>
-                            Broni
-                        </td>
+                        <td>{{order.product.name}}</td>
+                        <td>{{order.quantity}}</td>
+                        <td>{{order.staff.username}}</td>
+                        <td>{{order.date|date:"d/m/Y-H:i"}}</td>
                     </tr>
-                    <tr>
-                        <th scope="row">2</th>
-                        <td>Jacob</td>
-                        <td>Thornton</td>
-                        <td>@fat</td>
-                        <td>
-                            Kenneth
-                        </td>
-                    </tr>
-                    <tr>
-                        <th scope="row">3</th>
-                        <td>Larry</td>
-                        <td>the Bird</td>
-                        <td>@twitter</td>
-                        <td>
-                            Cecilia
-                        </td>
-                    </tr>
+                    {% endfor %}
                 </tbody>
             </table>
         </div>
