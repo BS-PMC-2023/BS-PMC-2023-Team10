@@ -6,6 +6,13 @@
 <div class="container">
     <div class="row my-4">
         <div class="col-md-4">
+            {% for message in messages %}
+            {% if message %}
+            <div class="alert alert-{{ message.tags }}">
+                {{ message }}
+            </div>
+            {% endif %}
+            {% endfor %}
             <div class="border bg-white p-3">
                 <h4>Add Products</h4>
                 <hr>
@@ -26,7 +33,9 @@
                     <tr class="text-white">
                         <th scope="col">Name</th>
                         <th scope="col">Category</th>
+                        <th scope="col">Serial Number</th>
                         <th scope="col">Quantity</th>
+                        <th scope="col">Days To Loan</th>
                         <th scope="col">Activity</th>
                         <th scope="col">
                             <a href="{% url 'exportProducts' %}" class="btn btn-dark btn-sm">Export Products</a>
@@ -38,9 +47,11 @@
                     <tr>
                         <td>{{item.name}}</td>
                         <td>{{item.category}}</td>
+                        <td>{{item.sn}}</td>
                         <td>{{item.quantity}}</td>
+                        <td>{{item.days}}</td>
                         <td>
-                            <a class="btn btn-primary btn-sm" href="{% url 'dashboard-product-edit' item.id %}">Edit</a>
+                            <a class="btn btn-success btn-sm" href="{% url 'dashboard-product-edit' item.id %}">Edit</a>
                             <a class="btn btn-danger btn-sm" href="{% url 'dashboard-product-delete' item.id %}">Delete</a>
                         </td>
                     </tr>

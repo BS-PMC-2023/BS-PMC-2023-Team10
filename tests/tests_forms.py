@@ -10,6 +10,8 @@ class ProductFormTestCase(TestCase):
             'name': 'Test Product',
             'category': 'Stationary',
             'quantity': 10,
+            'sn': 1234,
+            'days': '1-2 Days',
         }
         form = ProductForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -20,6 +22,8 @@ class ProductFormTestCase(TestCase):
             'name': '',  # Invalid, as it's required
             'category': 'Invalid Category',  # Invalid, as it's not in the choices
             'quantity': -5,  # Invalid, as it should be a positive integer
+            'sn': 'a', # Invalid, as it should be a positive integer
+            'days': '15 Days', # Invalid, as it doesnt have this option.
         }
         form = ProductForm(data=form_data)
         self.assertFalse(form.is_valid())
@@ -30,6 +34,8 @@ class ProductFormTestCase(TestCase):
             'name': 'Test Product',
             'category': 'Stationary',
             'quantity': 10,
+            'sn': 1234,
+            'days': '1-2 Days',
         }
         form = ProductForm(data=form_data)
         self.assertTrue(form.is_valid())
@@ -39,3 +45,6 @@ class ProductFormTestCase(TestCase):
         self.assertEqual(product.name, 'Test Product')
         self.assertEqual(product.category, 'Stationary')
         self.assertEqual(product.quantity, 10)
+        self.assertEqual(product.sn, 1234)
+        self.assertEqual(product.days, '1-2 Days')
+        

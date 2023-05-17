@@ -11,7 +11,7 @@
                         <form method="POST">
                             {% csrf_token %}
                             {{ form|crispy }}
-                            <input class="btn btn-info btn-primary" type="submit" value="Make Request">
+                            <input class="btn btn-success" type="submit" value="Make Request">
                         </form>
                     </div>
                 </div>
@@ -23,20 +23,22 @@
                     </div>
                     <div class="card-body">
                         <table class="table bg-white">
-                            <thead class="bg-info text-white">
+                            <thead class="bg-primary text-white">
                                 <tr>
                                     <th scope="col">Product</th>
-                                    <th scope="col">Category</th>
                                     <th scope="col">Quantity</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Days To Loan</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                {% for order in order %}
-                                {% if order.customer == user %}
+                                {% for order in orders %}
+                                {% if order.staff == user%}
                                 <tr>
-                                    <td>{{ order.name }}</td>
-                                    <td>{{ order.name.category }}</td>
-                                    <td>{{ order.order_quantity }}</td>
+                                    <td>{{order.product.name}}</td>
+                                    <td>{{order.quantity}}</td>
+                                    <td>{{order.date|date:"d/m/Y-H:i"}}</td>
+                                    <td>{{order.product.days}}</td>
                                 </tr>
                                 {% endif %}
                                 {% endfor %}

@@ -9,7 +9,8 @@ class ProductTestCase(TestCase):
             name='TestProduct',
             category='Stationary',
             quantity=10,
-         
+            sn=1234,
+            days='1-2 Days',
 
         )
     
@@ -18,6 +19,8 @@ class ProductTestCase(TestCase):
         self.assertEqual(self.product.name, 'TestProduct')
         self.assertEqual(self.product.category, 'Stationary')
         self.assertEqual(self.product.quantity, 10)
+        self.assertEqual(self.product.sn, 1234)
+        self.assertEqual(self.product.days, '1-2 Days')
     
     def test_product_string_representation(self):
         """Test the __str__ method of the Product model."""
