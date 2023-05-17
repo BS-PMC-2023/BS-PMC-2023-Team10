@@ -6,6 +6,13 @@
 <div class="row my-4">
     <div class="col-md-6 offset-md-3">
         <div class="border p-3 bg-white">
+            {% for message in messages %}
+            {% if message %}
+            <div class="alert alert-danger">
+                {{ message }}
+            </div>
+            {% endif %}
+            {% endfor %}
             <h4>Register Page</h4>
             <hr>
             <form method="POST">
