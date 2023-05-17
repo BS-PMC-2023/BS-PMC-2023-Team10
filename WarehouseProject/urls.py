@@ -28,5 +28,6 @@ urlpatterns = [
          name='user_profile_update'),
     path('',auth_views.LoginView.as_view(template_name='user/login.html'),name='user_login'),
     path('logout/',auth_views.LogoutView.as_view(template_name='user/logout.html'),name='user_logout'),
+    path('password_reset/',auth_views.PasswordResetView.as_view(),name='password_reset'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -24,10 +24,10 @@
                 <tbody>
                     {% for order in orders %}
                     <tr>
-                        <td>{{order.product}}</td>
+                        <td>{{order.product.name}}</td>
                         <td>{{order.quantity}}</td>
                         <td>{{order.staff.username}}</td>
-                        <td>{{order.date}}</td>
+                        <td>{{order.date|date:"d/m/Y-H:i"}}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

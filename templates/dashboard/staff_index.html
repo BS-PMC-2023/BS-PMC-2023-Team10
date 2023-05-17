@@ -37,7 +37,7 @@
                                 <tr>
                                     <td>{{order.product.name}}</td>
                                     <td>{{order.quantity}}</td>
-                                    <td>{{order.date}}</td>
+                                    <td>{{order.date|date:"d/m/Y-H:i"}}</td>
                                     <td>{{order.product.days}}</td>
                                 </tr>
                                 {% endif %}

@@ -5,59 +5,94 @@ from .models import Product,Order
 from .forms import ProductForm,OrderForm
 from .resources import ProductResource,OrderResource
 import csv
+from django.contrib import messages
 from django.views import View
 from django.contrib.auth.models import User
 # Create your views here.
 
 @login_required(login_url='user_login')
 def index(request):
+    products = Product.objects.all()
+    product_count = products.count()
     orders = Order.objects.all()
-    if request.method=='POST':
+    order_count = orders.count()
+    customers = User.objects.all()
+    customer_count = customers.count()
+
+    if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            instance = form.save(commit=False)
-            instance.staff = request.user
-            instance.save()
+            obj = form.save(commit=False)
+            obj.customer = request.user
+            obj.save()
             return redirect('dashboard-index')
     else:
         form = OrderForm()
     context = {
-        'orders':orders,
-        'form':form,
+        'form': form,
+        'orders': orders,
+        'products': products,
+        'product_count': product_count,
+        'order_count': order_count,
+        'customer_count': customer_count,
     }
-
-    return render(request,'dashboard/index.html',context)
+    return render(request, 'dashboard/index.html', context)
 
 @login_required(login_url='user_login')
 def staff(request):
-    workers = User.objects.all()
+    products = Product.objects.all()
+    product_count = products.count()
+    orders = Order.objects.all()
+    order_count = orders.count()
+    customers = User.objects.all()
+    customer_count = customers.count()
     context = {
-        'workers':workers
+        'customers':customers,
+        'customer_count':customer_count,
+        'product_count': product_count,
+        'order_count': order_count,
     }
-
     return render(request,'dashboard/staff.html',context)
 
 @login_required(login_url='user_login')
 def staff_detail(request,pk):
-    workers = User.objects.get(id=pk)
+    customers = User.objects.get(id=pk)
+    customer_count = User.objects.all().count()
+    products = Product.objects.all()
+    product_count = products.count()
+    orders = Order.objects.all()
+    order_count = orders.count()
     context = {
-        'workers':workers,
+        'customers':customers,
+        'customer_count':customer_count,
+        'product_count': product_count,
+        'order_count': order_count,
     }
     return render(request, 'dashboard/staff_detail.html',context)
 
 @login_required(login_url='user_login')
 def product(request):
+    customer_count = User.objects.all().count()
+    products = Product.objects.all()
+    product_count = products.count()
+    orders = Order.objects.all()
+    order_count = orders.count()
     items = Product.objects.all()
     if request.method == 'POST':
         form = ProductForm(request.POST)
         if form.is_valid():
             form.save()
+            product_name = form.cleaned_data.get('name')
+            messages.success(request,f'{product_name} has been added!')
             return redirect('dashboard-product')
     else:
         form = ProductForm()
     context = {
         'items':items,
         'form':form,
+        'customer_count':customer_count,
+        'product_count': product_count,
+        'order_count': order_count,
 
         }
     return render(request,'dashboard/product.html',context)
@@ -89,9 +124,17 @@ def product_edit(request, pk):
 
 @login_required(login_url='user_login')
 def order(request):
+    products = Product.objects.all()
+    product_count = products.count()
     orders = Order.objects.all()
+    order_count = orders.count()
+    customers = User.objects.all()
+    customer_count = customers.count()
     context = {
         'orders':orders,
+        'customer_count':customer_count,
+        'product_count': product_count,
+        'order_count': order_count,
     }
     return render(request,'dashboard/order.html',context)
 

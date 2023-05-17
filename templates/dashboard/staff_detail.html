@@ -19,25 +19,25 @@
                         <tbody>
                             <tr>
                                 <th scope="row">Name</th>
-                                <td>{{ workers.username }}</td>
+                                <td>{{ customers.username }}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Email</th>
-                                <td>{{ workers.email }}</td>
+                                <td>{{ customers.email }}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Phone</th>
-                                <td>{{ workers.profile.phone }}</td>
+                                <td>{{ customers.profile.phone }}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Address</th>
-                                <td>{{ workers.profile.address }}</td>
+                                <td>{{ customers.profile.address }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-4">
-                    <img class="img-thumbnail" src="{{ workers.profile.image.url }}" alt="profile-image" width="200" height="200">
+                    <img class="img-thumbnail" src="{{ customers.profile.image.url }}" alt="profile-image" width="200" height="200">
                 </div>
             </div>
         </div>
