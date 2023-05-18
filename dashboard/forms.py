@@ -12,7 +12,7 @@ DAYS_TO_LOAN = (
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name','category','quantity','sn','days']
+        fields = ['name','category','quantity','sn']
 
 
 class OrderForm(forms.ModelForm):
@@ -24,4 +24,4 @@ class OrderForm(forms.ModelForm):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.fields['product'].queryset = Product.objects.all()
+        self.fields['product'].queryset = Product.objects.filter(quantity__gt=0)

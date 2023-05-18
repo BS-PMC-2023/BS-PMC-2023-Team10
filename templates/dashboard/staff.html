@@ -12,17 +12,14 @@
                         <th scope="col">#</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for customer in customers %}
                     <tr>
-                        
                         <th scope="row"><a class="btn btn-dark btn-sm" href="{% url 'dashboard-staff-detail' customer.id %}">View</a></th>
+                        <td>{{ customer.first_name }} {{ customer.last_name }}</td>
                         <td>{{ customer.username }}</td>
-                        <td>{{ customer.email }}</td>
-                        <td>{{ customer.profile.phone }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>

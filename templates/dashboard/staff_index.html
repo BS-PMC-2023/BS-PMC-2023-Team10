@@ -6,6 +6,7 @@
                 <div class="card">
                     <div class="card-header">
                         Make Request
+                        
                     </div>
                     <div class="card-body">
                         <form method="POST">
@@ -29,16 +30,18 @@
                                     <th scope="col">Quantity</th>
                                     <th scope="col">Date</th>
                                     <th scope="col">Days To Loan</th>
+                                    <th scope="col">Status</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for order in orders %}
-                                {% if order.staff == user%}
+                                {% if order.staff == user %}
                                 <tr>
                                     <td>{{order.product.name}}</td>
                                     <td>{{order.quantity}}</td>
                                     <td>{{order.date|date:"d/m/Y-H:i"}}</td>
                                     <td>{{order.product.days}}</td>
+                                    <td>{{order.status}}</td>
                                 </tr>
                                 {% endif %}
                                 {% endfor %}
