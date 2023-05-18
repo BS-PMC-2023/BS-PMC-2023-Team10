@@ -1,10 +1,10 @@
-from django.shortcuts import render,redirect
+from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from .models import Product,Order
 from .forms import ProductForm,OrderForm
 from .resources import ProductResource,OrderResource
-import csv
+from django.db.models import F
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.models import User
@@ -22,9 +22,9 @@ def index(request):
     if request.method == 'POST':
         form = OrderForm(request.POST)
         if form.is_valid():
-            obj = form.save(commit=False)
-            obj.customer = request.user
-            obj.save()
+            order = form.save(commit=False)
+            order.staff = request.user
+            order.save()
             return redirect('dashboard-index')
     else:
         form = OrderForm()
@@ -138,6 +138,38 @@ def order(request):
     }
     return render(request,'dashboard/order.html',context)
 
+@login_required(login_url='user_login')
+def approve_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'Approved'
+    order.save()
+    product = order.product
+    product.quantity = F('quantity') - order.quantity
+    product.save()
+    return redirect('dashboard-order')
+
+def finish_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'Finished'
+    order.save()
+    product = order.product
+    product.quantity = F('quantity') + order.quantity
+    product.save()
+    return redirect('dashboard-order')
+
+
+def remove_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.delete()
+    return redirect('dashboard-order')
+
+
+@login_required(login_url='user_login')
+def deny_order(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    order.status = 'Denied'
+    order.save()
+    return redirect('dashboard-order')
 
 class ExportDataView(View):
     def get(self, request):

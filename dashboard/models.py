@@ -25,7 +25,7 @@ class Product(models.Model):
     days = models.CharField(max_length=100,choices=DAYS_TO_LOAN,null=True,verbose_name='Days To Loan',default='1-2 Days')
 
     def __str__(self):
-        return f'{self.name}-{self.quantity}'
+        return f'{self.name}'
     
 
 
@@ -34,6 +34,6 @@ class Order(models.Model):
     staff = models.ForeignKey(User, models.CASCADE, null=True)
     quantity = models.PositiveIntegerField(null=True)
     date = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('Finished', 'Finished')), default='Pending')
 
-    def __str__(self):
-        return f'{self.product} ordered by {self.staff.username}'
+

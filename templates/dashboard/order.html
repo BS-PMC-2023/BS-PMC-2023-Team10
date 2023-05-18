@@ -14,8 +14,11 @@
                     <tr class="text-white">
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
-                        <th scope="col">Order by</th>
+                        <th scope="col">Ordered by</th>
                         <th scope="col">Date</th>
+                        <th scope="col">
+                            Status
+                        </th>
                         <th scope="col">
                             <a href="{% url 'exportOrders' %}" class="btn btn-dark btn-sm">Export Orders</a>
                         </th>
@@ -28,6 +31,30 @@
                         <td>{{order.quantity}}</td>
                         <td>{{order.staff.username}}</td>
                         <td>{{order.date|date:"d/m/Y-H:i"}}</td>
+                        <td>
+                            {% if order.status == 'Pending' %}
+                            <a class="btn btn-dark btn-sm" href="{% url 'approve_order' order.id %}">Approve</a>
+                            <a class="btn btn-dark btn-sm" href="{% url 'deny_order' order.id %}">Deny</a>
+                            {% else %}
+                            <span class="
+                                {% if order.status == 'Approved' %}text-success font-weight-bold
+                                {% elif order.status == 'Denied' %}text-danger font-weight-bold
+                                {% elif order.status == 'Finished' %}text-primary font-weight-bold
+                                {% endif %}">
+                                    {{ order.status }}
+                            </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if order.status == 'Approved' %}
+                            <a class="btn btn-dark btn-sm" href="{% url 'finish_order' order.id %}">Return Items To Warehouse</a>
+                            {% elif order.status == 'Finished' %}
+                            <a class="btn btn-dark btn-sm" href="{% url 'remove_order' order.id %}">Remove Order</a>
+                            {% elif order.status == 'Denied' %}
+                            <a class="btn btn-dark btn-sm" href="{% url 'remove_order' order.id %}">Remove Order</a>
+                            {% endif %}
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
