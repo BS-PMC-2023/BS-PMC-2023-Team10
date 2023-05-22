@@ -9,22 +9,21 @@
             <table class="table bg-white">
                 <thead class="bg-primary">
                     <tr class="text-white">
-                        <th scope="col">#</th>
+                        <th scope="col">Details</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
-                        <th scope="col">Phone</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for customer in customers %}
-                    <tr>
-                        
+                    {% if customer.username != 'admin' %}
+                      <tr>
                         <th scope="row"><a class="btn btn-dark btn-sm" href="{% url 'dashboard-staff-detail' customer.id %}">View</a></th>
+                        <td>{{ customer.first_name }} {{ customer.last_name }}</td>
                         <td>{{ customer.username }}</td>
-                        <td>{{ customer.email }}</td>
-                        <td>{{ customer.profile.phone }}</td>
-                    </tr>
-                    {% endfor %}
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
                 </tbody>
             </table>
         </div>
