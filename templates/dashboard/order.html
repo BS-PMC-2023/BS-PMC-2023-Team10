@@ -15,7 +15,8 @@
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Ordered by</th>
-                        <th scope="col">Date</th>
+                        <th scope="col">Time Of Order</th>
+                        <th scope="col">Return Date</th>
                         <th scope="col">
                             Status
                         </th>
@@ -31,6 +32,20 @@
                         <td>{{order.quantity}}</td>
                         <td>{{order.staff.username}}</td>
                         <td>{{order.date|date:"d/m/Y-H:i"}}</td>
+                        {% if order.current_date|date:"d/m/Y" == order.day_before_return|date:"d/m/Y" and order.status == 'Approved' %}
+                            <td style="color: black">{{ order.returnDate|date:"d/m/Y" }}<br>
+                                <strong>Return Date Approaching!</strong>
+                            </td>
+                        {% elif order.current_date|date:"d/m/Y" == order.returnDate|date:"d/m/Y" and order.status == 'Approved' %}
+                            <td style="color: red">{{ order.returnDate|date:"d/m/Y" }}<br>
+                                <strong>Today is return day!</strong>
+                                {% if order.extendRequested == 'Pending' %}
+                                    <a class="btn btn-dark btn-sm" href="{% url 'extend_approve_deny' order.id %}">Extend Request Has Been Made</a>
+                                {% endif %}
+                            </td>
+                        {% else %}
+                        <td>{{ order.returnDate|date:"d/m/Y" }}</td>
+                        {% endif %}
                         <td>
                             {% if order.status == 'Pending' %}
                             <a class="btn btn-dark btn-sm" href="{% url 'approve_order' order.id %}">Approve</a>

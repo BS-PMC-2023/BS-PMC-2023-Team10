@@ -1,0 +1,31 @@
+{% extends 'partials/base.html' %}
+{% block title %}Date Extend Request Page{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-6 offset-md-3 p-3 bg-white">
+        <h3>Extend Return Date</h3>
+        <p>Current Return Date: {{ order.returnDate|date:"d/m/Y" }}</p>
+        <p>New Return Date: {{ order.extendedDate|date:"d/m/Y" }}</p>
+        <hr>
+        <div class="row">
+            <div class="col-md-6">
+              <form method="POST">
+                {% csrf_token %}
+               
+                <input type="hidden" name="status" value="Approve">
+                <button type="submit" class="btn btn-success btn-block">Approve</button>
+              </form>
+            </div>
+            <div class="col-md-6">
+              <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="status" value="Deny">
+                <button type="submit" class="btn btn-danger btn-block">Deny</button>
+              </form>
+            </div>
+          </div>
+    </div>
+</div>
+{% endblock %}

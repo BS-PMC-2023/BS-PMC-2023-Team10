@@ -24,39 +24,70 @@
 
                 </form>
             </div>
-            
+        </div>
 
-        </div>
         <div class="col-md-8">
-            <table class="table bg-white">
-                <thead class="bg-primary">
-                    <tr class="text-white">
-                        <th scope="col">Name</th>
-                        <th scope="col">Category</th>
-                        <th scope="col">Serial Number</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Activity</th>
-                        <th scope="col">
-                            <a href="{% url 'exportProducts' %}" class="btn btn-dark btn-sm">Export Products</a>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for item in items %}
-                    <tr>
-                        <td>{{item.name}}</td>
-                        <td>{{item.category}}</td>
-                        <td>{{item.sn}}</td>
-                        <td>{{item.quantity}}</td>
-                        <td>
-                            <a class="btn btn-success btn-sm" href="{% url 'dashboard-product-edit' item.id %}">Edit</a>
-                            <a class="btn btn-danger btn-sm" href="{% url 'dashboard-product-delete' item.id %}">Delete</a>
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
+            
+            
+            <div class="table-wrapper">
+                            <table id="productTable" class="table bg-white">
+              <thead class="bg-primary">
+                <tr class="text-white">
+                    <th scope="col">
+                        <div class="dropdown">
+                          <button class="btn btn-link text-white dropdown-toggle" type="button" id="categoryButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            All Categories
+                          </button>
+                          <div class="dropdown-menu" aria-labelledby="categoryButton">
+                            <a class="dropdown-item" href="#" onclick="filterTableByCategory('')">All Categories</a>
+                            {% for category in unique_categories %}
+                            <a class="dropdown-item" href="#" onclick="filterTableByCategory('{{ category }}')">{{ category }}</a>
+                            {% endfor %}
+                          </div>
+                        </div>
+                      </th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Serial Number</th>
+                  <th scope="col">Quantity</th>
+                  <th scope="col">Activity</th>
+                  <th scope="col">
+                    <a href="{% url 'exportProducts' %}" class="btn btn-dark btn-sm">Export Products</a>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for item in items %}
+                <tr data-category="{{ item.category }}">
+                  <td>{{ item.category }}</td>
+                  <td>{{ item.name }}</td>
+                  <td>{{ item.sn }}</td>
+                  <td>{{ item.quantity }}</td>
+                  <td>
+                    <a class="btn btn-success btn-sm" href="{% url 'dashboard-product-edit' item.id %}">Edit</a>
+                    <a class="btn btn-danger btn-sm" href="{% url 'dashboard-product-delete' item.id %}">Delete</a>
+                  </td>
+                </tr>
+                {% endfor %}
+              </tbody>
             </table>
+
+              </div>
+
+          </div>
+          
+          <script>
+            function filterTableByCategory(category) {
+                document.getElementById('categoryButton').textContent = category !== '' ? category : 'All Categories';
+              if (category === '') {
+                $('#productTable tbody tr').show();
+              } else {
+                $('#productTable tbody tr').hide();
+                $('#productTable tbody tr[data-category="' + category + '"]').show();
+              }
+            }
+          </script>
         </div>
+
     </div>
 
 </div>
