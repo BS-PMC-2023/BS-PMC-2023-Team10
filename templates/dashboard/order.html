@@ -5,13 +5,12 @@
 <!--Table-->
 <div class="container">
     <div class="row my-4">
-        <div class="col-md-4">
 
-        </div>
-        <div class="col-md-8">
+        <div class="col-md-12">
             <table class="table bg-white">
                 <thead class="bg-primary">
                     <tr class="text-white">
+                        <th scope="col">Order #</th>
                         <th scope="col">Product</th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Ordered by</th>
@@ -28,6 +27,7 @@
                 <tbody>
                     {% for order in orders %}
                     <tr>
+                        <td>{{order.id}}</td>
                         <td>{{order.product.name}}</td>
                         <td>{{order.quantity}}</td>
                         <td>{{order.staff.username}}</td>
@@ -39,9 +39,6 @@
                         {% elif order.current_date|date:"d/m/Y" == order.returnDate|date:"d/m/Y" and order.status == 'Approved' %}
                             <td style="color: red">{{ order.returnDate|date:"d/m/Y" }}<br>
                                 <strong>Today is return day!</strong>
-                                {% if order.extendRequested == 'Pending' %}
-                                    <a class="btn btn-dark btn-sm" href="{% url 'extend_approve_deny' order.id %}">Extend Request Has Been Made</a>
-                                {% endif %}
                             </td>
                         {% else %}
                         <td>{{ order.returnDate|date:"d/m/Y" }}</td>
@@ -64,11 +61,26 @@
                         <td>
                             {% if order.status == 'Approved' %}
                             <a class="btn btn-dark btn-sm" href="{% url 'finish_order' order.id %}">Return Items To Warehouse</a>
+                                <br>
+                                {% if order.extendRequested == 'Pending' %}
+                                <br>
+                                <a class="btn btn-info btn-sm" href="{% url 'extend_approve_deny' order.id %}">Extend Request Has Been Made</a>
+                                {% endif %}
+                            <br>
                             {% elif order.status == 'Finished' %}
                             <a class="btn btn-dark btn-sm" href="{% url 'remove_order' order.id %}">Remove Order</a>
+                            <br>
                             {% elif order.status == 'Denied' %}
                             <a class="btn btn-dark btn-sm" href="{% url 'remove_order' order.id %}">Remove Order</a>
+                            <br>
                             {% endif %}
+                            
+                            {% if order.is_reported %}
+                                <br>
+                                <a class="btn btn-danger btn-sm" href="{% url 'view_damage_report' order.id %}">Damage Reported - Click To View</a>
+                            {% endif %}
+
+
                         </td>
                     </tr>
                     {% endfor %}

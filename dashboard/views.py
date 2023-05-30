@@ -1,18 +1,49 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
-from .models import Product,Order
-from .forms import ProductForm,OrderForm
+from .models import Product,Order,DamageReport
+from .forms import ProductForm,OrderForm,DamageReportForm
 from .resources import ProductResource,OrderResource
 from django.db.models import F
 from django.contrib import messages
 from django.views import View
 from django.contrib.auth.models import User
 from django.http import JsonResponse
+from django.db.models import Sum
 
 
 
 # Create your views here.
+
+
+def report_damage(request, order_id):
+    order = Order.objects.get(id=order_id)
+    product_name = order.product.name
+
+    if request.method == 'POST':
+        form = DamageReportForm(request.POST)
+        if form.is_valid():
+            damage_report = form.save(commit=False)
+            damage_report.order = order
+            damage_report.save()
+            order.is_reported = True
+            order.save()
+
+            return redirect('dashboard-index')
+    else:
+        form = DamageReportForm(product_name=product_name)
+
+    context = {
+        'form': form,
+    }
+    return render(request, 'dashboard/report_damage.html', context)
+
+def view_damage_report(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    damage_report = DamageReport.objects.get(order=order)
+    context = {'order': order, 'damage_report': damage_report}
+    return render(request, 'dashboard/view_damage_report.html', context)
+
 
 
 def get_products_by_category(request):
@@ -40,7 +71,7 @@ def get_products_by_category(request):
 @login_required(login_url='user_login')
 def index(request):
     products = Product.objects.filter(quantity__gt=0)
-    product_count = products.count()
+    product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
     orders = Order.objects.all()
     order_count = orders.count()
     customers = User.objects.exclude(username='admin')
@@ -68,7 +99,7 @@ def index(request):
 @login_required(login_url='user_login')
 def staff(request):
     products = Product.objects.filter(quantity__gt=0)
-    product_count = products.count()
+    product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
     orders = Order.objects.all()
     order_count = orders.count()
     customers = User.objects.exclude(username='admin')
@@ -86,7 +117,7 @@ def staff_detail(request,pk):
     customers = User.objects.get(id=pk)
     customer_count = User.objects.exclude(username='admin').count()
     products = Product.objects.filter(quantity__gt=0)
-    product_count = products.count()
+    product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
     orders = Order.objects.all()
     order_count = orders.count()
     context = {
@@ -101,7 +132,7 @@ def staff_detail(request,pk):
 def product(request):
     customer_count = User.objects.exclude(username='admin').count()
     products = Product.objects.filter(quantity__gt=0)
-    product_count = products.count()
+    product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
     orders = Order.objects.all()
     order_count = orders.count()
     items = Product.objects.all()
@@ -154,7 +185,7 @@ def product_edit(request, pk):
 @login_required(login_url='user_login')
 def order(request):
     products = Product.objects.filter(quantity__gt=0)
-    product_count = products.count()
+    product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
     orders = Order.objects.all()
     order_count = orders.count()
     customers = User.objects.exclude(username='admin')

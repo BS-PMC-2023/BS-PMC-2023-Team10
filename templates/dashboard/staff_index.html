@@ -2,7 +2,7 @@
     {% load crispy_forms_tags %}
     <div>
         <div class="row mt-4">
-            <div class="col-md-4">
+            <div class="col-md-2">
                 <div class="card">
                     <div class="card-header">
                         Make Request
@@ -18,7 +18,7 @@
                 </div>
                 
             </div>
-            <div class="col-md-8">
+            <div class="col-md-10">
                 <div class="card">
                     <div class="card-header">
                         Orders Records
@@ -27,6 +27,7 @@
                         <table class="table bg-white">
                             <thead class="bg-primary text-white">
                                 <tr>
+                                    <th scope="col">Order #</th>
                                     <th scope="col">Category</th>
                                     <th scope="col">Product</th>
                                     <th scope="col">Serial Number</th>
@@ -34,12 +35,15 @@
                                     <th scope="col">Time Of Order</th>
                                     <th scope="col">Return Date</th>
                                     <th scope="col">Status</th>
+                                    <th scope="col">Options</th>
+
                                 </tr>
                             </thead>
                             <tbody>
                                 {% for order in orders %}
                                 {% if order.staff == user %}
                                 <tr>
+                                    <td>{{order.id}}</td>
                                     <td>{{order.product.category}}</td>
                                     <td>{{order.product.name}}</td>
                                     <td>{{order.product.sn}}</td>
@@ -49,34 +53,58 @@
                                     {% if order.current_date|date:"d/m/Y" == order.day_before_return|date:"d/m/Y" and order.status == 'Approved' %}
                                         <td style="color: black">{{ order.returnDate|date:"d/m/Y" }}<br>
                                             <strong>Return Date Approaching!</strong>
-                                            <a class="btn btn-dark btn-sm" href="{% url 'extend_order' order.id %}">Request Extend</a>
+                                            
                                         </td>
                                     {% elif order.current_date|date:"d/m/Y" == order.returnDate|date:"d/m/Y" and order.status == 'Approved' %}
                                         <td style="color: red">{{ order.returnDate|date:"d/m/Y" }}<br>
                                             <strong>Today is return day!<br></strong>
-                                            {% if order.extendRequested == 'NotRequested' %}
-                                                <a class="btn btn-dark btn-sm" href="{% url 'extend_order' order.id %}">Request Extend</a>
-                                            {% elif order.extendRequested == 'Pending' %}
-                                                <span style="color: black;"><strong>Extend Request Pending<strong></span>
-                                            {% elif order.extendRequested == 'Approved' %}
-                                            <span style="color: green;"><strong>Extend Request Has Approved<strong></span>
-                                            {% elif order.extendRequested == 'Denied' %}
-                                            <span style="color: red;"><strong>Extend Request Has Denied<strong></span>
-                                            {% endif %}
                                         </td>
                                     {% else %}
                                     <td>{{ order.returnDate|date:"d/m/Y" }}</td>
                                     {% endif %}
 
-                                    <td><span class="
+                                    <td>
+                                        <span class="
                                         {% if order.status == 'Approved' %}text-success font-weight-bold
                                         {% elif order.status == 'Denied' %}text-danger font-weight-bold
                                         {% elif order.status == 'Finished' %}text-primary font-weight-bold
                                         {% elif order.status == 'Pending' %}text font-weight-bold
                                         {% endif %}">
                                             {{ order.status }}
-                                    </span>
+                                        </span>
                                     </td>
+                                    <td>
+                                        {% if order.status != 'Pending' %}
+                                            {% if not order.is_reported %}
+                                                <a class="btn btn-dark btn-sm" href="{% url 'report_damage' order.id %}">Report Damage</a>
+                                            {% else %}
+                                            <strong>Damage Reported<strong>
+                                            {% endif %}
+                                            
+                                        <br>
+                                        {% endif %}
+                                        {% if order.current_date|date:"d/m/Y" == order.day_before_return|date:"d/m/Y" and order.status == 'Approved' %}  
+                                          <br>
+                                          <a class="btn btn-dark btn-sm" href="{% url 'extend_order' order.id %}">Request Extend</a>
+                                        {% elif order.current_date|date:"d/m/Y" == order.returnDate|date:"d/m/Y" and order.status == 'Approved' %}
+                                          {% if order.extendRequested == 'NotRequested' %}
+                                            <br>
+                                            <a class="btn btn-dark btn-sm" href="{% url 'extend_order' order.id %}">Request Extend</a>
+                                          {% elif order.extendRequested == 'Pending' %}
+                                            <br>
+                                            <span style="color: black;"><strong>Extend Request Pending<strong></span>
+                                          {% elif order.extendRequested == 'Approved' %}
+                                            <br>
+                                            <span style="color: green;"><strong>Extend Request Has Approved<strong></span>
+                                          {% elif order.extendRequested == 'Denied' %}
+                                            <br>
+                                            <span style="color: red;"><strong>Extend Request Has Denied<strong></span>
+                                          {% endif %}
+                                        {% endif %}
+                                      </td>
+                                      
+                                    
+
                                 </tr>
 
 

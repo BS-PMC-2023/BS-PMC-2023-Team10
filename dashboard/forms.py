@@ -1,8 +1,7 @@
 from django import forms
-from .models import Product,Order
+from .models import Product,Order,DamageReport
 from django.forms import TextInput
 from django.core.exceptions import ValidationError
-
 
 CATEGORY = (
     ('Cables','Cables'),
@@ -64,6 +63,7 @@ class OrderForm(forms.ModelForm):
                 raise ValidationError('Requested quantity exceeds available quantity.')
 
         return cleaned_data
+    
 
     def add_error(self, field, error):
         if field == 'product' and error.code == 'invalid_choice':
@@ -75,3 +75,21 @@ class OrderForm(forms.ModelForm):
         if 'product' in self._errors:
             self._errors['product'].clear()
             del self._errors['product']
+
+
+
+class DamageReportForm(forms.ModelForm):
+    class Meta:
+        model = DamageReport
+        fields = ['item', 'description']
+
+    def __init__(self, *args, **kwargs):
+        product_name = kwargs.pop('product_name', None)  # Remove 'product_name' from kwargs
+        super().__init__(*args, **kwargs)
+        self.fields['item'].widget.attrs.update({'class': 'form-control'})
+        self.fields['description'].widget.attrs.update({'class': 'form-control', 'rows': 4})
+        
+        if product_name:
+            self.fields['item'].widget.attrs['readonly'] = True
+            self.initial['item'] = product_name
+

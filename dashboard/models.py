@@ -37,6 +37,7 @@ class Order(models.Model):
     extendRequested = models.CharField(max_length=12, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('NotRequested','NotRequested')), default='NotRequested')
     extendedDate = models.DateTimeField(null=False,default=timezone.now,verbose_name='Extended Date')
     category = models.CharField(max_length=100, choices=CATEGORY, null=True)
+    is_reported = models.BooleanField(default=False)
 
 
     @property
@@ -45,5 +46,13 @@ class Order(models.Model):
     def current_date(self):
         return timezone.now().date()
 
+
+class DamageReport(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,null=True)
+    item = models.CharField(max_length=100)
+    description = models.TextField()
+
+    def __str__(self):
+        return self.item
 
 

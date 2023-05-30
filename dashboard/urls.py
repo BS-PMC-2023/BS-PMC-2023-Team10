@@ -18,5 +18,6 @@ urlpatterns = [
     path('exportProducts/', ExportDataView.as_view(), name='exportProducts'),
     path('exportOrders/', ExportOrderView.as_view(), name='exportOrders'),
     path('get_products_by_category/', views.get_products_by_category, name='get_products_by_category'),
-
+    path('report_damage/<int:order_id>/', views.report_damage, name='report_damage'),
+    path('view_damage_report/<int:order_id>/', views.view_damage_report, name='view_damage_report'),
 ]
