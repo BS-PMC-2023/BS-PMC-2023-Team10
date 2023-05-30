@@ -4,18 +4,18 @@ from django.contrib.auth.forms import UserCreationForm
 from phonenumber_field.formfields import PhoneNumberField
 from .models import Profile
 class CreateUserForm(UserCreationForm):
-    email = forms.EmailField()
-    phone_number = forms.CharField(max_length=20)
+    username = forms.CharField(label='Email (SCE Email Only!)')
     class Meta:
         model = User
-        fields = ['username','first_name','last_name','email','phone_number','password1','password2']
+        fields = ['username', 'first_name', 'last_name', 'password1', 'password2']
+
         
 
 
 class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
-        fields = ['username', 'email']
+        fields = ['username',]
 
 
 class ProfileUpdateForm(forms.ModelForm):

@@ -1,0 +1,20 @@
+{% extends 'partials/base.html' %}
+{% block title %}Date Extend Request Page{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-6 offset-md-3 p-3 bg-white">
+        <h3>Extend Return Date</h3>
+        <p>Current Return Date: {{ order.returnDate|date:"d/m/Y" }}</p>
+        <hr>
+        <form form method="POST">
+            {% csrf_token %}
+            <label for="return_date">New Return Date:</label>
+            <input type="date" id="return_date" name="return_date" required>
+            <input class="btn btn-success" type="submit" value="Confirm">
+            <a class="btn btn-secondary" href="{% url 'dashboard-index' %}">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}
