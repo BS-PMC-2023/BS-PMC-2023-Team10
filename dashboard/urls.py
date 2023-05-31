@@ -20,4 +20,11 @@ urlpatterns = [
     path('get_products_by_category/', views.get_products_by_category, name='get_products_by_category'),
     path('report_damage/<int:order_id>/', views.report_damage, name='report_damage'),
     path('view_damage_report/<int:order_id>/', views.view_damage_report, name='view_damage_report'),
+    path('send-request/', views.send_request, name='send_request'),
+    path('view_request/', views.view_request, name='view_request'),
+    path('requests/approve/<int:message_id>/',views.approve_request, name='approve_request'),
+    path('requests/deny/<int:message_id>/', views.deny_request, name='deny_request'),
+    path('requests/remove/<int:message_id>/', views.remove_request, name='remove_request'),
+    path('view_request_student/', views.view_request_student, name='view_request_student'),
+
 ]
