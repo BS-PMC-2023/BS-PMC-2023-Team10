@@ -3,18 +3,15 @@ from django.urls import reverse
 from django.contrib.auth.models import User
 from dashboard.models import Product
 from dashboard.forms import ProductForm
-import coverage
-cov = coverage.Coverage()
-cov.start()
+
+
 class ViewsTestCase(TestCase):
     def setUp(self):
         self.client = Client()
         self.user = User.objects.create_user(username='testuser', password='testpassword')
-        self.user.is_staff = True
-        self.user.is_superuser = True
-        self.user.save()
         self.client.login(username='testuser', password='testpassword')
-        self.product = Product.objects.create(name='Test Product',quantity=10)
+        self.product = Product.objects.create(name='Test Product', quantity=10)
+
     def test_index_view(self):
         """Test the index view."""
         response = self.client.get(reverse('dashboard-index'))
@@ -53,8 +50,3 @@ class ViewsTestCase(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertTemplateUsed(response, 'dashboard/order.html')
 
-
-cov.stop()
-
-# Generate the coverage report
-cov.report()

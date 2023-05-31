@@ -30,8 +30,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'pipenv run python manage.py test' 
-                 sh 'coverage run  manage.py test' 
+                sh 'pipenv run python manage.py test'  
             }
         }
 
@@ -48,44 +47,6 @@ pipeline {
                 }
             }
         }
-        stage('Coverage Report') {
-        steps {
-            sh 'coverage report'
-         }
-    }
-     stage('Customer Satisfaction Metrics') {
-            steps {
-                script {
-                    
-                    sh 'python customer_satisfaction.py'
-                    sh 'python customer_interviews.py'
-                    
-                   
-                }
-            }
-        }
-
-        
-    
-  
-        stage('Count Lines of Code') {
-            steps {
-                script {
-                      sh 'pygount --format=summary ./your-directory'
-                      sh 'pygount --format=summary ./ C:\Users\Asus\OneDrive\Desktop\wareHouseProject\BS-PMC-2023-Team10\ '
-
-                }
-            }
-        }
-    }
-}
-
-    
-
-        
-
-}
-
     }
 
     post {
