@@ -30,7 +30,8 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'pipenv run python manage.py test'  
+                sh 'pipenv run python manage.py test' 
+                sh 'pipenv coverage run manage.py test' 
             }
         }
 
@@ -47,6 +48,42 @@ pipeline {
                 }
             }
         }
+        stage('Coverage Report') {
+        steps {
+            sh 'pipenv run coverage report'
+         }
+    }
+     stage('Customer Satisfaction Metrics') {
+            steps {
+                script {
+                    
+                    sh 'pipenv run python customer_satisfaction.py'
+                    sh 'pipenv run python customer_interviews.py'
+                    
+                   
+                }
+            }
+        }
+
+        
+    
+  
+        stage('Count Lines of Code') {
+            steps {
+                script {
+                      sh 'pipenv run pygount --format=summary'
+                }
+            }
+        }
+    }
+}
+
+    
+
+        
+
+}
+
     }
 
     post {
