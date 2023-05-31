@@ -1,8 +1,9 @@
 from django.test import TestCase
 from dashboard.forms import ProductForm
 from dashboard.models import Product
-
-
+import coverage
+cov = coverage.Coverage()
+cov.start()
 class ProductFormTestCase(TestCase):
     def test_product_form_valid(self):
         """Test the ProductForm with valid data."""
@@ -44,3 +45,9 @@ class ProductFormTestCase(TestCase):
         self.assertEqual(product.quantity, 1)
         self.assertEqual(product.sn, '1234')
         
+
+# Stop coverage
+cov.stop()
+
+# Generate the coverage report
+cov.report()

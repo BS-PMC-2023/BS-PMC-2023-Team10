@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect,get_object_or_404
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.http import HttpResponse
-from .models import Product,Order,DamageReport
+from .models import Product,Order,DamageReport,Message
 from .forms import ProductForm,OrderForm,DamageReportForm
 from .resources import ProductResource,OrderResource
 from django.db.models import F
@@ -10,10 +10,77 @@ from django.views import View
 from django.contrib.auth.models import User
 from django.http import JsonResponse
 from django.db.models import Sum
+from django.core.exceptions import PermissionDenied
+from import_export.formats import base_formats
+
+def staff_required(view_func):
+    @login_required(login_url='user_login')
+    @user_passes_test(lambda u: u.is_staff, login_url='user_login')
+    def wrapper(request, *args, **kwargs):
+        return view_func(request, *args, **kwargs)
+    return wrapper
 
 
 
 # Create your views here.
+
+def view_request_student(request):
+    messages = Message.objects.filter(customer=request.user)  # Filter messages by the current user
+    
+    return render(request, 'dashboard/view_request_student.html', {'messages': messages})
+
+@staff_required
+def remove_request(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    if request.method == 'POST':
+        message.is_visible_to_manager = False
+        message.save()
+        return redirect('view_request')
+    return render(request, {'message': message})
+
+
+@staff_required
+def view_request(request):
+    if not request.user.is_staff:
+        raise PermissionDenied
+    messages = Message.objects.all()
+    return render(request, 'dashboard/view_request.html', {'messages': messages})
+
+
+
+def send_request(request):
+    products = Product.objects.all()
+    
+    if request.method == 'POST':
+        product_id = request.POST.get('product')
+        product = get_object_or_404(Product, pk=product_id)
+        message = request.POST.get('message')
+        Message.objects.create(
+            customer=request.user,
+            product=product,
+            message=message
+        )
+        return redirect('dashboard-index')
+
+    return render(request, 'dashboard/send_request.html', {'products': products})
+
+@staff_required
+def approve_request(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    if request.method == 'POST':
+        message.status = 'Approved'
+        message.save()
+        return redirect('view_request')
+    
+@staff_required
+def deny_request(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    if request.method == 'POST':
+        # Perform your denial logic here
+        message.status = 'Denied'
+        message.save()
+        return redirect('view_request')
+
 
 
 def report_damage(request, order_id):
@@ -38,6 +105,7 @@ def report_damage(request, order_id):
     }
     return render(request, 'dashboard/report_damage.html', context)
 
+@staff_required
 def view_damage_report(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     damage_report = DamageReport.objects.get(order=order)
@@ -48,11 +116,7 @@ def view_damage_report(request, order_id):
 
 def get_products_by_category(request):
     category = request.GET.get('category')
-
-    # Retrieve products based on the selected category
     products = Product.objects.filter(category=category)
-
-    # Prepare the data to be sent as a JSON response
     products_data = []
     for product in products:
         product_data = {
@@ -95,7 +159,7 @@ def index(request):
     }
     return render(request, 'dashboard/index.html', context)
 
-@login_required(login_url='user_login')
+@staff_required
 def staff(request):
     products = Product.objects.filter(quantity__gt=0)
     product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
@@ -207,6 +271,7 @@ def extend_order(request,order_id):
     return render(request, 'dashboard/extend_order.html', {'order': order})
 
 
+@staff_required
 def extend_approve_deny(request, order_id):
     order = Order.objects.get(id=order_id)
     if request.method == 'POST':
@@ -225,7 +290,7 @@ def extend_approve_deny(request, order_id):
 
 
 
-@login_required(login_url='user_login')
+@staff_required
 def approve_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     order.status = 'Approved'
@@ -235,6 +300,7 @@ def approve_order(request, order_id):
     product.save()
     return redirect('dashboard-order')
 
+@staff_required
 def finish_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     order.status = 'Finished'
@@ -244,19 +310,22 @@ def finish_order(request, order_id):
     product.save()
     return redirect('dashboard-order')
 
-
+@staff_required
 def remove_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
+    
     order.delete()
     return redirect('dashboard-order')
 
 
-@login_required(login_url='user_login')
+@staff_required
 def deny_order(request, order_id):
     order = get_object_or_404(Order, id=order_id)
     order.status = 'Denied'
     order.save()
     return redirect('dashboard-order')
+
+
 
 class ExportDataView(View):
     def get(self, request):
