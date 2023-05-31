@@ -4,24 +4,25 @@
 <!--Table-->
 <div class="container">
     <div class="row my-4">
-        <div class="col-md-4"></div>
-        <div class="col-md-8">
+        <div class="col-md-12">
             <table class="table bg-white">
                 <thead class="bg-primary">
                     <tr class="text-white">
-                        <th scope="col">#</th>
+                        <th scope="col">Details</th>
                         <th scope="col">Name</th>
                         <th scope="col">Email</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for customer in customers %}
-                    <tr>
+                    {% if customer.username != 'admin' %}
+                      <tr>
                         <th scope="row"><a class="btn btn-dark btn-sm" href="{% url 'dashboard-staff-detail' customer.id %}">View</a></th>
                         <td>{{ customer.first_name }} {{ customer.last_name }}</td>
                         <td>{{ customer.username }}</td>
-                    </tr>
-                    {% endfor %}
+                      </tr>
+                    {% endif %}
+                  {% endfor %}
                 </tbody>
             </table>
         </div>

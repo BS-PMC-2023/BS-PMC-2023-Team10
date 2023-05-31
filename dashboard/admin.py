@@ -10,11 +10,11 @@ from django.contrib.auth.admin import UserAdmin
 admin.site.site_header = 'Communication Warehouse Admin Panel'
 
 class ProductsAdmin(ExportActionMixin,admin.ModelAdmin):
-    list_display = ('name','category','quantity','days','sn')
+    list_display = ('name','category','quantity','sn')
     list_filter = ('category',)
 
 class OrderAdmin(ExportActionMixin,admin.ModelAdmin):
-    list_display = ('product','staff','quantity','date','status',)
+    list_display = ('product','staff','quantity','date','returnDate','status','extendRequested')
     list_filter = ('date',)
 
 class UserResource(resources.ModelResource):
