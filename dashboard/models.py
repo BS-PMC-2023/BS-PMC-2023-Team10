@@ -56,3 +56,10 @@ class DamageReport(models.Model):
         return self.item
 
 
+class Message(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('Finished', 'Finished')), default='Pending')
+    is_visible_to_manager = models.BooleanField(default=True)
