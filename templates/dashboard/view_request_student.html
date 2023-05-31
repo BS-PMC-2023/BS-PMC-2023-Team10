@@ -1,0 +1,61 @@
+{% extends 'partials/base.html' %}
+{% block title %}View My Requests{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+<div class="col-md-9 my-4 mx-auto">
+    <div class="d-flex justify-content-center mb-3">
+      <form method="POST">
+        {% csrf_token %}
+        <a class="btn btn-warning" href="{% url 'dashboard-index' %}">Back To Dashboard</a>
+      </form>
+    </div>
+
+<div class="container-fluid">
+    <div class="card">
+        <div class="card-header">
+            <h4>My Requests</h4>
+        </div>
+        <div class="card-body">
+            {% if messages %}
+                <table class="table bg-white">
+                    <thead class="bg-primary text-white">
+                        <tr>
+                            <th scope="col">Request ID</th>
+                            <th scope="col">Product</th>
+                            <th scope="col">Message</th>
+                            <th scope="col">Created At</th>
+                            <th scope="col">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for message in messages %}
+                            <tr>
+                                <td>{{ message.id }}</td>
+                                <td>{{ message.product.name }}</td>
+                                <td>{{ message.message }}</td>
+                                <td>{{ message.created_at }}</td>
+                                <td>
+                                    <span class="
+                                    {% if message.status == 'Approved' %}text-success font-weight-bold
+                                    {% elif message.status == 'Denied' %}text-danger font-weight-bold
+                                    {% elif message.status == 'Pending' %}text font-weight-bold
+                                    {% endif %}">
+                                    {{ message.status }}
+                                    </span>
+                                  
+                                  </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <p>No requests found.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+</div>
+
+{% endblock %}
