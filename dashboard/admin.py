@@ -1,3 +1,4 @@
+from asyncio import ProactorEventLoop
 from django.contrib import admin
 from .models import Product,Order
 from django.contrib.auth.models import Group

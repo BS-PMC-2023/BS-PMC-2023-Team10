@@ -38,7 +38,7 @@ deactivate () {
 # unset irrelevant variables
 deactivate nondestructive
 
-VIRTUAL_ENV="C:\Users\mlirm\Documents\GitHub\BS-PMC-2023-Team10\.venv"
+VIRTUAL_ENV="C:\Users\Asus\OneDrive\Desktop\wareHouseProject\BS-PMC-2023-Team10\.venv"
 export VIRTUAL_ENV
 
 _OLD_VIRTUAL_PATH="$PATH"

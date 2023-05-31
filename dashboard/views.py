@@ -64,7 +64,6 @@ def get_products_by_category(request):
     response_data = {
         'products': products_data,
     }
-
     return JsonResponse(response_data)
 
 
@@ -112,7 +111,7 @@ def staff(request):
     }
     return render(request,'dashboard/staff.html',context)
 
-@login_required(login_url='user_login')
+@staff_required
 def staff_detail(request,pk):
     customers = User.objects.get(id=pk)
     customer_count = User.objects.exclude(username='admin').count()
@@ -128,7 +127,7 @@ def staff_detail(request,pk):
     }
     return render(request, 'dashboard/staff_detail.html',context)
 
-@login_required(login_url='user_login')
+@staff_required
 def product(request):
     customer_count = User.objects.exclude(username='admin').count()
     products = Product.objects.filter(quantity__gt=0)
@@ -157,8 +156,7 @@ def product(request):
         }
     return render(request,'dashboard/product.html',context)
 
-
-@login_required(login_url='user_login')
+@staff_required
 def product_delete(request, pk):
     item = Product.objects.get(id=pk)
     if request.method=='POST':
@@ -167,7 +165,7 @@ def product_delete(request, pk):
     return render(request,'dashboard/product_delete.html')
 
 
-@login_required(login_url='user-login')
+@staff_required
 def product_edit(request, pk):
     item = Product.objects.get(id=pk)
     if request.method == 'POST':
@@ -182,7 +180,7 @@ def product_edit(request, pk):
     }
     return render(request, 'dashboard/product_edit.html', context)
 
-@login_required(login_url='user_login')
+@staff_required
 def order(request):
     products = Product.objects.filter(quantity__gt=0)
     product_count = Product.objects.aggregate(product_count=Sum('quantity'))['product_count']
@@ -207,7 +205,6 @@ def extend_order(request,order_id):
         order.save()
         return redirect('dashboard-index')
     return render(request, 'dashboard/extend_order.html', {'order': order})
-
 
 
 def extend_approve_deny(request, order_id):
@@ -266,8 +263,11 @@ class ExportDataView(View):
         products = Product.objects.all()
         product_resource = ProductResource()
         dataset = product_resource.export(products)
-        response = HttpResponse(dataset.csv, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="products.csv"'
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="items.xlsx"'
+        export_format = base_formats.XLSX()
+        export_data = export_format.export_data(dataset)
+        response.write(export_data)
         return response
     
 
@@ -277,6 +277,16 @@ class ExportOrderView(View):
         orders = Order.objects.all()
         orders_resource = OrderResource()
         dataset = orders_resource.export(orders)
-        response = HttpResponse(dataset.csv, content_type='text/csv')
-        response['Content-Disposition'] = 'attachment; filename="orders.csv"'
+        
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename="orders.xlsx"'
+        
+        export_format = base_formats.XLSX()
+        export_data = export_format.export_data(dataset)
+        
+        response.write(export_data)
+        
         return response
+
+
+
