@@ -3,11 +3,11 @@
 {% include 'partials/topnav.html' %}
 <!--Table-->
 <div class="row my-4">
-    <div class="col-md-4"></div>
-    <div class="col-md-6">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
         <div class="card">
             <div class="card-header bg-primary text-white">
-                Customer Detail Page
+                Student Detail Page
             </div>
             <div class="row p-3">
                 <div class="col-md-8">
@@ -19,25 +19,21 @@
                         <tbody>
                             <tr>
                                 <th scope="row">Name</th>
-                                <td>{{ workers.username }}</td>
-                            </tr>
-                            <tr>
-                                <th scope="row">Email</th>
-                                <td>{{ workers.email }}</td>
+                                <td>{{ customers.first_name }} {{ customers.last_name }}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Phone</th>
-                                <td>{{ workers.profile.phone }}</td>
+                                <td>{{ customers.profile.phone }}</td>
                             </tr>
                             <tr>
                                 <th scope="row">Address</th>
-                                <td>{{ workers.profile.address }}</td>
+                                <td>{{ customers.profile.address }}</td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
                 <div class="col-md-4">
-                    <img class="img-thumbnail" src="{{ workers.profile.image.url }}" alt="profile-image" width="200" height="200">
+                    <img class="img-thumbnail" src="{{ customers.profile.image.url }}" alt="profile-image" width="200" height="200">
                 </div>
             </div>
         </div>

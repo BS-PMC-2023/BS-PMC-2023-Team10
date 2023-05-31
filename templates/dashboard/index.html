@@ -1,84 +1,171 @@
 {% extends 'partials/base.html' %}
-
-
 {% block content %}
 {% if user.is_authenticated and user.is_staff and user.is_superuser %}
 {% include 'partials/topnav.html' %}
 <!--Graphs-->
-<div class="container">
-    <div class="row my-5">
-        <div class="col-md-6">
-            <div class="bg-white">
-                <canvas id="myChart1" width="400" height="300"></canvas>
+<div class="row ">
+    <div class="col-md-6 my-4">
+        <div class="bg-white">
+            <div class="card-body">
+                <canvas id="myChart1" width="300" height="200"></canvas>
                 <script>
-                    var ctx = document.getElementById('myChart1').getContext('2d');
-                    var myChart1 = new Chart(ctx, {
-                        type: 'pie',
-                        data: {
-                            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-                            datasets: [{
-                                label: 'Products',
-                                data: [12, 19, 3, 5, 2, 3],
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
-                                borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            scales: {
-                                yAxes: [{
-                                    ticks: {
-                                        beginAtZero: true
-                                    }
-                                }]
-                            }
+                    var Colors = [
+                    "#b7c54b", "#d97a82", "#96a7db", "#f58c48", "#f0e272", "#961766", "#8fe6d3", "#746e82", "#80f446", "#c62475",
+                    "#84a84d", "#394fa4", "#f5f1bf", "#ca74b1", "#909fe6", "#74963d", "#dd19a5", "#f52dc3", "#103b30", "#7e68be",
+                    "#4783cc", "#b4d63a", "#bcc9d9", "#a64936", "#208caa", "#5c3fc3", "#fdaa1a", "#c0f98a", "#1978e6", "#d9cfe3",
+                    "#9dc01a", "#96ece5", "#4abc4c", "#977505", "#88d006", "#f01cde", "#c2fe46", "#c99441", "#8d2a7", "#7b91e2",
+                    "#164fc", "#a252a3", "#80c62b", "#cf389f", "#6ea12f", "#7e7b2f", "#a0d624", "#7c136a", "#5f13e6", "#cf1a5d",
+                    "#843d43", "#17a4b2", "#2b987", "#3bbbc", "#7a7394", "#213c82", "#6b4f67", "#e2acda", "#489a55", "#336710",
+                    "#c62762", "#d566c1", "#fe5c8a", "#656fea", "#7c7713", "#499208", "#dd8d4e", "#b8be7f", "#a6c160", "#c08260",
+                    "#7af4a5", "#9632fb", "#20cb09", "#58e5a1", "#86f25b", "#f2965b", "#51d319", "#1e2e33", "#950239", "#f631c4",
+                    "#513732", "#a48df3", "#d2f907", "#5350d1", "#b7d40f", "#37937f", "#bf0cbb", "#bea321", "#246e36", "#e9103f",
+                    "#7e6d22", "#d3656d", "#c15194", "#2048d6", "#cf2a8b", "#29449", "#f15ae5", "#2bea75", "#d8c66f", "#c71219"
+                ];
+                var categories = [];
+                var categoryCounts = [];
+                var currentData = null;
+                {% for product in products %}
+                var category = '{{ product.category }}';
+                var quantity = {{ product.quantity }};
+                var categoryIndex = categories.indexOf(category);
+                if (categoryIndex !== -1) {
+                  categoryCounts[categoryIndex] += quantity;
+                } else {
+                  categories.push(category);
+                  categoryCounts.push(quantity);
+                }
+                {% endfor %}
+              
+                function showItems(category) {
+                  $.ajax({
+                    url: '{% url "get_products_by_category" %}',
+                    type: 'GET',
+                    data: { category: category },
+                    success: function (response) {
+                      var products = response.products;
+                      var productData = {};
+                      products.forEach(function (product) {
+                        var name = product.name;
+                        var quantity = product.quantity;
+              
+                        if (productData[name]) {
+                          productData[name] += quantity;
+                        } else {
+                          productData[name] = quantity;
                         }
-                    });
-                </script>
+                      });
+                      var labels = Object.keys(productData);
+                      var data = Object.values(productData);
+                      myChart1.data.labels = labels;
+                      myChart1.data.datasets[0].data = data;
+                      myChart1.update();
+                      var totalItems = data.reduce(function (total, quantity) {
+                        return total + quantity;
+                      }, 0);
+                      myChart1.options.title.text = 'Items in ' + category + ' (' + totalItems + ')';
+                      myChart1.update();
+                      myChart1.options.onClick = null;
+                      document.getElementById('backButton').style.display = 'block';
+                    },
+                    error: function (xhr, status, error) {
+                      console.log(error);
+                    }
+                  });
+                }
+                function goBack() {
+                  myChart1.data.labels = categories;
+                  myChart1.data.datasets[0].data = categoryCounts;
+                  myChart1.update();
+                  myChart1.options.title.text = 'Categories';
+                  myChart1.update();
+                  myChart1.options.onClick = function (event, elements) {
+                    if (elements.length > 0) {
+                      var categoryIndex = elements[0]._index;
+                      var categoryLabel = categories[categoryIndex];
+                      showItems(categoryLabel);
+                    }
+                  };
+                  document.getElementById('backButton').style.display = 'none';
+                }
+                var ctx = document.getElementById('myChart1').getContext('2d');
+                var myChart1 = new Chart(ctx, {
+                  type: 'pie',
+                  data: {
+                    labels: categories,
+                    datasets: [{
+                      label: 'Number of Products',
+                      data: categoryCounts,
+                      backgroundColor: Colors,
+                      borderColor: Colors,
+                      borderWidth: 1
+                    }]
+                  },
+                  options: {
+                    title: {
+                      display: true,
+                      text: 'Categories'
+                    },
+                    onClick: function (event, elements) {
+                      if (elements.length > 0) {
+                        var categoryIndex = elements[0]._index;
+                        var categoryLabel = categories[categoryIndex];
+                        showItems(categoryLabel);
+                      }
+                    }
+                  }
+                });
+              </script>
+              <button id="backButton" style="display: none;" onclick="goBack()">Back</button>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="bg-white">
-                <canvas id="myChart" width="400" height="300"></canvas>
+    </div>
+    <div class="col-md-6 my-4">
+        <div class="bg-white">
+            <div class="card-body">
+                <canvas id="myChart" width="300" height="200"></canvas>
                 <script>
+                    var Colors = [
+                    "#b7c54b", "#d97a82", "#96a7db", "#f58c48", "#f0e272", "#961766", "#8fe6d3", "#746e82", "#80f446", "#c62475",
+                    "#84a84d", "#394fa4", "#f5f1bf", "#ca74b1", "#909fe6", "#74963d", "#dd19a5", "#f52dc3", "#103b30", "#7e68be",
+                    "#4783cc", "#b4d63a", "#bcc9d9", "#a64936", "#208caa", "#5c3fc3", "#fdaa1a", "#c0f98a", "#1978e6", "#d9cfe3",
+                    "#9dc01a", "#96ece5", "#4abc4c", "#977505", "#88d006", "#f01cde", "#c2fe46", "#c99441", "#8d2a7", "#7b91e2",
+                    "#164fc", "#a252a3", "#80c62b", "#cf389f", "#6ea12f", "#7e7b2f", "#a0d624", "#7c136a", "#5f13e6", "#cf1a5d",
+                    "#843d43", "#17a4b2", "#2b987", "#3bbbc", "#7a7394", "#213c82", "#6b4f67", "#e2acda", "#489a55", "#336710",
+                    "#c62762", "#d566c1", "#fe5c8a", "#656fea", "#7c7713", "#499208", "#dd8d4e", "#b8be7f", "#a6c160", "#c08260",
+                    "#7af4a5", "#9632fb", "#20cb09", "#58e5a1", "#86f25b", "#f2965b", "#51d319", "#1e2e33", "#950239", "#f631c4",
+                    "#513732", "#a48df3", "#d2f907", "#5350d1", "#b7d40f", "#37937f", "#bf0cbb", "#bea321", "#246e36", "#e9103f",
+                    "#7e6d22", "#d3656d", "#c15194", "#2048d6", "#cf2a8b", "#29449", "#f15ae5", "#2bea75", "#d8c66f", "#c71219"
+                ];
+                    
                     var ctx = document.getElementById('myChart').getContext('2d');
+
+                    // Filter orders by status 'Approved'
+                    var approvedOrders = [
+                        {% for order in orders %}
+                            {% if order.status == 'Approved' %}
+                                '{{ order.product.name }}',
+                            {% endif %}
+                        {% endfor %}
+                    ];
+
+                    // Filter order quantities for 'Approved' orders
+                    var approvedQuantities = [
+                        {% for order in orders %}
+                            {% if order.status == 'Approved' %}
+                                {{ order.quantity }},
+                            {% endif %}
+                        {% endfor %}
+                    ];
+
                     var myChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+                            labels: approvedOrders,
                             datasets: [{
-                                label: 'Products',
-                                data: [12, 19, 3, 5, 2, 3],
-                                backgroundColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
-                                borderColor: [
-                                    'rgba(255, 99, 132, 1)',
-                                    'rgba(54, 162, 235, 1)',
-                                    'rgba(255, 206, 86, 1)',
-                                    'rgba(75, 192, 192, 1)',
-                                    'rgba(153, 102, 255, 1)',
-                                    'rgba(255, 159, 64, 1)'
-                                ],
+                                label: 'Orders',
+                                data: approvedQuantities,
+                                backgroundColor: Colors,
+                                borderColor: Colors,
                                 borderWidth: 1
                             }]
                         },
@@ -89,6 +176,20 @@
                                         beginAtZero: true
                                     }
                                 }]
+                            },
+                            legend: {
+                                display: false
+                            },
+                            tooltips: {
+                                callbacks: {
+                                    label: function(tooltipItem) {
+                                        return tooltipItem.yLabel;
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Orders'
                             }
                         }
                     });

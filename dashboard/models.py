@@ -2,30 +2,28 @@ from sre_constants import CATEGORY_DIGIT
 from unittest.util import _MAX_LENGTH
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
+from datetime import timedelta
 # Create your models here.
 CATEGORY = (
-    ('Stationary','Stationary'),
-    ('Electronics','Electronics'),
+    ('Cables','Cables'),
+    ('Lights','Lights'),
+    ('Convertors','Convertors'),
+    ('Projectors','Projectors'),
+    ('Tripod','Tripod'),
+    ('Apple','Apple'),
+    ('Rec','Rec'),
+    ('Camera','Camera'),
     )
-
-DAYS_TO_LOAN = (
-    ('1-2 Days','1-2 Days'),
-    ('3 Days - 1 Week','3 Days - 1 Week'),
-    ('1 Week - 2 Weeks','1 Week - 2 Weeks'),
-    ('Other','Other'),
-    )
-
-
 
 class Product(models.Model):
     name = models.CharField(max_length=100,null=True)
-    sn = models.PositiveIntegerField(null=True, verbose_name='Serial Number')
+    sn = models.CharField(max_length=20, null=True, verbose_name='Serial Number')
     category = models.CharField(max_length=100,choices=CATEGORY,null=True)
     quantity = models.PositiveIntegerField(null=True)
-    days = models.CharField(max_length=100,choices=DAYS_TO_LOAN,null=True,verbose_name='Days To Loan',default='1-2 Days')
 
     def __str__(self):
-        return f'{self.name}-{self.quantity}'
+        return f'{self.name}'
     
 
 
@@ -34,6 +32,27 @@ class Order(models.Model):
     staff = models.ForeignKey(User, models.CASCADE, null=True)
     quantity = models.PositiveIntegerField(null=True)
     date = models.DateTimeField(auto_now_add=True)
+    returnDate = models.DateTimeField(null=False,default=timezone.now,verbose_name='Return Date')
+    status = models.CharField(max_length=10, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('Finished', 'Finished')), default='Pending')
+    extendRequested = models.CharField(max_length=12, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('NotRequested','NotRequested')), default='NotRequested')
+    extendedDate = models.DateTimeField(null=False,default=timezone.now,verbose_name='Extended Date')
+    category = models.CharField(max_length=100, choices=CATEGORY, null=True)
+    is_reported = models.BooleanField(default=False)
+
+
+    @property
+    def day_before_return(self):
+        return self.returnDate - timedelta(days=1)
+    def current_date(self):
+        return timezone.now().date()
+
+
+class DamageReport(models.Model):
+    order = models.ForeignKey(Order, on_delete=models.CASCADE,null=True)
+    item = models.CharField(max_length=100)
+    description = models.TextField()
 
     def __str__(self):
-        return f'{self.product} ordered by {self.staff.username}'
+        return self.item
+
+

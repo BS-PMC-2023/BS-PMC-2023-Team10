@@ -24,9 +24,12 @@ urlpatterns = [
     path('', include('dashboard.urls')),
     path('register/',user_view.register,name='user_register'),
     path('profile/',user_view.profile,name='user_profile'),
-    path('profile/update/', user_view.profile_update,
-         name='user_profile_update'),
+    path('profile/update/', user_view.profile_update,name='user_profile_update'),
     path('',auth_views.LoginView.as_view(template_name='user/login.html'),name='user_login'),
     path('logout/',auth_views.LogoutView.as_view(template_name='user/logout.html'),name='user_logout'),
+    path('reset_password/', auth_views.PasswordResetView.as_view(), name='password_reset'),
+    path('reset_password/done/', auth_views.PasswordResetDoneView.as_view(), name='password_reset_done'),
+    path('reset_password/confirm/<uidb64>/<token>/', auth_views.PasswordResetConfirmView.as_view(), name='password_reset_confirm'),
+    path('reset_password/complete/', auth_views.PasswordResetCompleteView.as_view(), name='password_reset_complete'),
 
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
