@@ -2,7 +2,9 @@ from django.contrib.auth.models import User
 from django.test import TestCase
 from user.models import Profile
 from dashboard.models import Product,Order
-
+import coverage
+cov = coverage.Coverage()
+cov.start()
 class ProductTestCase(TestCase):
     def setUp(self):
         self.product=Product.objects.create(
@@ -60,3 +62,13 @@ class OrderTestCase(TestCase):
         """Test the __str__ method of the Order model."""
         expected_string = 'Order object (1)'
         self.assertEqual(str(self.order), expected_string) 
+
+
+
+
+
+# Stop coverage
+cov.stop()
+
+# Generate the coverage report
+cov.report()

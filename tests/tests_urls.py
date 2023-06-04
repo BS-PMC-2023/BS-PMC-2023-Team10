@@ -1,6 +1,9 @@
 from django.test import SimpleTestCase
 from django.urls import reverse,resolve
 from dashboard.views import index,staff,order,product
+import coverage
+cov = coverage.Coverage()
+cov.start()
 class TestUrls(SimpleTestCase):
     #Tests for the urls
     def test_dashboard_url_is_resolved(self):
@@ -19,3 +22,8 @@ class TestUrls(SimpleTestCase):
         url = reverse('dashboard-product')
         print(resolve(url))
         self.assertEquals(resolve(url).func, product)
+
+cov.stop()
+
+# Generate coverage report
+cov.report()
