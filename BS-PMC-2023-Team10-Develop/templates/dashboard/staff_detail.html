@@ -1,0 +1,46 @@
+{% extends 'partials/base.html' %}
+{% block content %}
+{% include 'partials/topnav.html' %}
+<!--Table-->
+<div class="row my-4">
+    <div class="col-md-1"></div>
+    <div class="col-md-10">
+        <div class="card">
+            <div class="card-header bg-primary text-white">
+                Student Detail Page
+            </div>
+            <div class="row p-3">
+                <div class="col-md-8">
+                    <table class="table table-borderless">
+                        <thead>
+                            <span class="h4">Profile Information</span class="h4">
+                            <hr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th scope="row">Name</th>
+                                <td>{{ customers.first_name }} {{ customers.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Phone</th>
+                                <td>{{ customers.profile.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Address</th>
+                                <td>{{ customers.profile.address }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-4">
+                    <img class="img-thumbnail" src="{{ customers.profile.image.url }}" alt="profile-image" width="200" height="200">
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<!--End Table-->
+{% endblock %}

@@ -1,0 +1,6 @@
+<h2>Are you sure you want to delete your account?</h2>
+
+<form method="POST" action="{% url 'delete_user' %}">
+    {% csrf_token %}
+    <button type="submit">Delete</button>
+</form>
