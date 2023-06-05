@@ -1,4 +1,4 @@
-<div class="container">
+<div class="pl-2 pr-2 justify-content-between w-100">
     {% load crispy_forms_tags %}
     <div>
         <div class="row mt-4">
@@ -11,6 +11,7 @@
                         <form method="POST">
                             {% csrf_token %}
                             {{ form|crispy }}
+                            <!-- {{ form.signature|as_crispy_field }}  Include the signature field -->
                             <input class="btn btn-success" type="submit" value="Make Request">
                         </form>
                     </div>

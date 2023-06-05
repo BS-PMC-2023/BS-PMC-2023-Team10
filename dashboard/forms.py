@@ -21,13 +21,14 @@ class ProductForm(forms.ModelForm):
 
 
 class OrderForm(forms.ModelForm):
+    # signature = forms.ImageField(required=False)
     class Meta:
         model = Order
         fields = ['category', 'product', 'quantity', 'returnDate']
         widgets = {
             'returnDate': forms.DateInput(attrs={'type': 'date'})
         }
-
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['product'].queryset = Product.objects.none()
@@ -75,6 +76,11 @@ class OrderForm(forms.ModelForm):
         if 'product' in self._errors:
             self._errors['product'].clear()
             del self._errors['product']
+    
+    """def clean_signature(self):
+        signature = self.cleaned_data['signature']
+        # Implement any validation or checks for the signature field if needed
+        return signature"""
 
 
 

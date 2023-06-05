@@ -1,36 +1,115 @@
-{% extends 'partials/base.html' %}
-{% block content %}
-{% include 'partials/topnav.html' %}
+{% extends 'partials/base.html' %} {% block content %} {% include 'partials/topnav.html' %}
 <!--Table-->
-<div class="container">
-    <div class="row my-4">
-        <div class="col-md-12">
-            <table class="table bg-white">
-                <thead class="bg-primary">
-                    <tr class="text-white">
-                        <th scope="col">Details</th>
-                        <th scope="col">Name</th>
-                        <th scope="col">Email</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for customer in customers %}
-                    {% if customer.username != 'admin' %}
-                      <tr>
-                        <th scope="row"><a class="btn btn-dark btn-sm" href="{% url 'dashboard-staff-detail' customer.id %}">View</a></th>
-                        <td>{{ customer.first_name }} {{ customer.last_name }}</td>
-                        <td>{{ customer.username }}</td>
-                      </tr>
-                    {% endif %}
-                  {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="pl-2 pr-2 justify-content-between w-100">
+  <div class="row my-4">
+    <div class="col-md-12">
+      <table class="table bg-white">
+        <thead class="bg-primary">
+          <tr class="text-white">
+            <th scope="col">Details</th>
+            <th scope="col">
+              <input type="text" placeholder="Name" id="searchInput" />
+              <div class="results"></div>
+            </th>
+            <th scope="col">Email</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for customer in customers %} {% if customer.username != 'admin' %}
+          <tr>
+            <th scope="row">
+              <a
+                class="btn btn-dark btn-sm"
+                href="{% url 'dashboard-staff-detail' customer.id %}"
+                >View</a
+              >
+            </th>
+            <td>
+              <span class="student" id="{{ customer.username }}"
+                >{{ customer.first_name }} {{ customer.last_name }}</span
+              >
+            </td>
+            <td>{{ customer.username }}</td>
+          </tr>
+          {% endif %} {% endfor %}
+        </tbody>
+      </table>
     </div>
-
+  </div>
 </div>
 
+<script>
+  let studentItems = document.querySelectorAll(".student");
+  let studentNames = [];
+  let searchInput = document.querySelector("#searchInput");
+  let resultsDiv = document.querySelector(".results");
+  let results = [];
 
+  for (let i = 0; i < studentItems.length; i++) {
+    studentObj = {
+      studentName: studentItems[i].innerHTML,
+      studentId: studentItems[i].id,
+    };
+    studentNames.push(studentObj);
+  }
+
+  searchInput.addEventListener("keyup", function (e) {
+    if (e.target.value.length >= 3) {
+      console.log(results);
+      resultsDiv.classList.add("show");
+      studentNames.filter((item) => {
+        str = item.studentName.toLowerCase();
+        if (str.match(e.target.value.toLowerCase())) {
+          results.push(item);
+        }
+      });
+
+      if (results) {
+        resultsDiv.innerHTML = results.map(
+          (item) => `<a href="#${item.studentId}">${item.studentName}</a>`
+        );
+      }
+    } else {
+      resultsDiv.classList.remove("show");
+      results.splice(0, results.length);
+    }
+  });
+</script>
+
+<style>
+  #searchInput {
+    position: relative;
+    background-color: transparent;
+    color: #fff;
+    border: 0;
+    outline: 0;
+  }
+
+  #searchInput::placeholder {
+    color: #fff;
+    opacity: 1;
+  }
+
+  .results {
+    position: absolute;
+    top: 50px;
+    left: 10px;
+    height: 300px;
+    width: 300px;
+    z-index: 999;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: none;
+    background-color: #fff;
+    color: black;
+    list-style: none;
+  }
+
+  .show {
+    display: flex !important;
+    flex-direction: column;
+  }
+</style>
 
 <!--End Table-->
 {% endblock %}
