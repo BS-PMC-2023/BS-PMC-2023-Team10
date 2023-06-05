@@ -30,6 +30,25 @@
                                 <th scope="row">Address</th>
                                 <td>{{ user.profile.address }}</td>
                             </tr>
+                            <tr>
+                                <th scope="row">Actions</th>
+                                <td>
+                                    {% if has_borrowed_items %}
+                                    <span>You cannot delete your account as you have borrowed items.</span>
+
+                                    {% else %}
+                                    
+                                    <form method="POST" action="{% url 'delete_user' %}">
+                                        {% csrf_token %}
+                                        <button class="btn btn-warning" type="submit">Delete Profile</button>
+                                    </form>
+
+                                    {% endif %}
+                                   
+                                  
+                                 
+                                   </td>
+                            </tr>
                         </tbody>
                     </table>
                 </div>
@@ -40,5 +59,4 @@
         </div>
     </div>
 </div>
-
 {% endblock %}

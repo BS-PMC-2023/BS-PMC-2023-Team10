@@ -3,9 +3,16 @@
 <html lang="en">
   <head>
     <style>
+<<<<<<< Updated upstream
       div{
         border-radius: 10px;
       }
+=======
+      div {
+        border-radius:10px;
+      }
+
+>>>>>>> Stashed changes
       a:hover {
         transform: scale(1.1);
       }
@@ -85,6 +92,10 @@
       let links = document.querySelector("#filterLinks");
       let fonts = document.querySelector("#filterFonts");
       let reset = document.querySelector("#filterReset");
+
+      if(localStorage.getItem("bw")) {
+          document.body.style.filter = "grayscale(100%)";
+        }
       
 
       function openAssistance() {
@@ -103,6 +114,7 @@
 
       //all about נגישות
       function addBw() {
+        localStorage.setItem("bw", true);
         document.body.style.filter = "grayscale(100%)";
       }
       function addBigLinks() {
@@ -115,6 +127,7 @@
         document.body.classList.remove("links");
         document.body.classList.remove("biggerFonts");
         document.body.style.filter = "";
+        localStorage.removeItem("bw");
       }
 
 
