@@ -30,7 +30,7 @@ pipeline {
 
         stage('Test') {
             steps {
-                sh 'pipenv run python manage.py test'  
+                sh 'pipenv run python manage.py test' 
             }
         }
 
@@ -38,23 +38,34 @@ pipeline {
             steps {
                 sh 'pipenv run python manage.py migrate' 
                 sh 'nohup pipenv run python manage.py runserver & sleep 5' 
-                sh 'pipenv run python manage.py test' 
+
+            }
+        }
+        stage('Coverage Report') {
+            steps {
+                sh 'pipenv run coverage report'
+            }
+        }
+        stage('Customer Satisfaction Metrics') {
+                steps {
+                    script {
+                        sh 'pipenv run python customer_satisfaction.py'
+                        sh 'pipenv run python customer_interviews.py'
+                }
+            }
+        }
+        
+        stage('Count Lines of Code') {
+            steps {
                 script {
-                    def processIds = sh(script: "ps aux | grep 'python manage.py runserver' | grep -v grep | awk '{print \$2}'", returnStdout: true).trim()
-                    if (processIds) {
-                        sh "echo '${processIds}' | xargs -r kill -9"
-                    }
+                      sh 'pipenv run pygount --format=summary'
                 }
             }
         }
     }
 
     post {
-        always {
-            sh 'find . -name "*.pyc" -delete' // Remove compiled Python files
-            junit allowEmptyResults: true, testResults: '**/test-results/*.xml'
-            cleanWs(cleanWhenNotBuilt: false, deleteDirs: true, disableDeferredWipeout: true, notFailBuild: true, patterns: [[pattern: '.gitignore', type: 'INCLUDE'],  [pattern: '.propsfile', type: 'EXCLUDE']])
-        }
+
 
         success {
             echo 'Build successful!' // Display success message
