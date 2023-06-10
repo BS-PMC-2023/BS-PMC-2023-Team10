@@ -1,9 +1,10 @@
 {% extends 'partials/base.html' %}
 
+
 {% block content %}
 {% include 'partials/topnav.html' %}
 <!--Table-->
-<div class="container">
+<div class="pl-2 pr-2 justify-content-between w-100">
     <div class="row my-4">
 
         <div class="col-md-12">
@@ -11,7 +12,8 @@
                 <thead class="bg-primary">
                     <tr class="text-white">
                         <th scope="col">Order #</th>
-                        <th scope="col">Product</th>
+                        <th scope="col"><input type="text" placeholder="Product" id="searchInput">
+                            <div class="results"></div></th>
                         <th scope="col">Quantity</th>
                         <th scope="col">Ordered by</th>
                         <th scope="col">Time Of Order</th>
@@ -28,7 +30,7 @@
                     {% for order in orders %}
                     <tr>
                         <td>{{order.id}}</td>
-                        <td>{{order.product.name}}</td>
+                        <td><span class="product" id="{{order.product.name}}">{{order.product.name}}</span></td>
                         <td>{{order.quantity}}</td>
                         <td>{{order.staff.username}}</td>
                         <td>{{order.date|date:"d/m/Y-H:i"}}</td>
@@ -90,6 +92,79 @@
     </div>
 
 </div>
+
+<script>
+    let productItems = document.querySelectorAll('.product');
+    let productNames = [];
+    let searchInput = document.querySelector("#searchInput")
+    let resultsDiv = document.querySelector(".results");
+    let results = []
+  
+    for(let i = 0; i < productItems.length; i++) {
+      productNames.push(productItems[i].innerHTML);
+    }
+  
+    searchInput.addEventListener("keyup", function(e) {
+      if(e.target.value.length >= 3) {
+        console.log(e.target.value);
+        resultsDiv.classList.add("show");
+        productNames.filter(item => {
+          str = item.toLowerCase();
+          if(str.match(e.target.value.toLowerCase())) {
+            results.push(item);
+          }
+        })
+  
+        if(results) {
+        resultsDiv.innerHTML = results.map(item => (`<a href="#${item}">${item}</a>`))
+      }
+      }
+      
+      else {
+        resultsDiv.classList.remove("show");
+        results.splice(0,results.length)
+      }
+    })
+  
+    
+  </script>
+  
+  <style>
+    #searchInput {
+      position:relative;
+      background-color: transparent;
+      color: #FFF;
+      border: 0;
+      outline: 0;
+    }
+  
+    #searchInput::placeholder {
+      color: #FFF;
+      opacity: 1;
+    }
+  
+    .results {
+      position:absolute;
+      top:50px;
+      left:0;
+      height:300px;
+      width:300px;
+      z-index: 999;
+      overflow-y: auto;
+      overflow-x: hidden;
+      display: none;
+      background-color: #FFF;
+      color: black;
+      list-style: none;
+    }
+  
+    .show {
+      display: flex !important;
+      flex-direction: column;
+    }
+  
+  </style>
+  
 
 
 

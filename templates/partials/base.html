@@ -1,44 +1,137 @@
 {%load static%}
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
+  <head>
+    <style>
+      div{
+        border-radius: 10px;
+      }
+      a:hover {
+        transform: scale(1.1);
+      }
+
+      a {
+        transition: transform 0.1s ease-in-out;
+      }
+      .biggerFonts {
+        font-size: 24px !important;
+      }
+
+      .links a {
+        text-decoration: underline !important;
+      }
+
+      .accss {
+        background-color: transparent !important;
+        border: 0;
+        outline: 0;
+      }
+      
+      
+      /* return Btm */
+      .backBtn {
+        position: fixed;
+        bottom: 30px;
+        left: 30px;
+      }
+
+      .backBtn button {
+        width: 100px;
+        height: 100px;
+        border-radius: 100px;
+        outline: 0;
+        border: 0;
+      }
+    </style>
     <!-- Required meta tags -->
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, shrink-to-fit=no"
+    />
 
     <!-- Bootstrap CSS -->
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
-          integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+      integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l"
+      crossorigin="anonymous"
+    />
 
     <!--FontAwesome CDN-->
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
-          integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
+      integrity="sha384-vSIIfh2YWi9wW0r9iZe7RJPrKwp6bG+s9QZMoITbCckVJqGCCRhc+ccxNcdpHuYu"
+      crossorigin="anonymous"
+    />
 
     <!--Chartjs CDN-->
     <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.4/dist/Chart.min.js"></script>
 
-
-
-    
-
-
     <!--Custome CSS-->
-    <link rel="stylesheet" href="{% static './style.css' %}">
-    
+    <link rel="stylesheet" href="{% static './style.css' %}" />
+
     <title>מחסן תקשורת חזותית</title>
-
-</head>
-<body>
-
-    {%include 'partials/nav.html'%}
-
-    {%block content%}
-
-    {%endblock%}
-
-
+  </head>
+  <body>
+    {%include 'partials/nav.html'%} {%block content%} {%endblock%}
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct" crossorigin="anonymous"></script>
-</body>
+    
+    <!-- Accessibility -->
+    <script defer>
+      let negiModal = document.querySelector("#modalNegishot");
+      let bw = document.querySelector("#filterBw");
+      let links = document.querySelector("#filterLinks");
+      let fonts = document.querySelector("#filterFonts");
+      let reset = document.querySelector("#filterReset");
+
+      if(localStorage.getItem("bw")) {
+          document.body.style.filter = "grayscale(100%)";
+        }
+      
+
+      function openAssistance() {
+        if (negiModal.classList.contains("show")) {
+          negiModal.classList.remove("show");
+          negiModal.classList.remove("d-flex");
+        } else {
+          negiModal.classList.add("show");
+          negiModal.classList.add("d-flex");
+        }
+      }
+      // return to back page
+      function backFunction() {
+        window.history.back();
+      }
+
+      //all about נגישות
+      function addBw() {
+        localStorage.setItem("bw", true);
+        document.body.style.filter = "grayscale(100%)";
+      }
+      function addBigLinks() {
+        document.body.classList.add("links");
+      }
+      function addBigFonts() {
+        document.body.classList.add("biggerFonts");
+      }
+      function resetModal() {
+        document.body.classList.remove("links");
+        document.body.classList.remove("biggerFonts");
+        document.body.style.filter = "";
+        localStorage.removeItem("bw");
+      }
+
+
+    
+
+    </script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-Fy6S3B9q64WdZWQUiU+q4/2Lc9npb8tCaSX9FK7E8HnRr0Jz8D6OP9dO5Vg3Q9ct"
+      crossorigin="anonymous"
+    ></script>
+  </body>
 </html>

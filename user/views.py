@@ -5,6 +5,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import CreateUserForm, ProfileUpdateForm
 from django.contrib import messages
 import csv
+from django.contrib.auth import logout
+from dashboard.models import Order
 # Create your views here.
 from django.contrib.auth.views import LoginView
 
@@ -63,3 +65,23 @@ def is_email_in_csv(email):
             if email == row[0]:
                 return True
     return False
+
+
+
+@login_required
+def delete_user(request):
+    user = request.user
+
+    # Check if the user has any borrowed items
+    has_borrowed_items = Order.objects.filter(staff=user).exists()
+
+    if has_borrowed_items:
+        #return redirect('profile')
+        return render(request, 'user/profile.html', {'has_borrowed_items': True})
+
+    if request.method == 'POST':
+        user.delete()
+        logout(request)  # Log out the user after deletion
+        return redirect('user_register')  # Redirect to the registration page
+
+    return render(request, 'user/delete_user.html', {'has_borrowed_items': False})
