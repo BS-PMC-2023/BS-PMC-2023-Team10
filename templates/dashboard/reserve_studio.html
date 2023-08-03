@@ -1,0 +1,18 @@
+{% extends 'partials/base.html' %}
+{% block title %}Reserve Studio{% endblock %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="row my-4">
+    <div class="col-md-6 offset-md-3 p-3 bg-white">
+        <h3>Reserve Studio for Recordings</h3>
+        <hr>
+        <form method="POST">
+            {% csrf_token %}
+            {{ form|crispy }}
+            <input class="btn btn-success" type="submit" value="Reserve">
+            <a class="btn btn-secondary" href="{% url 'dashboard-index' %}">Cancel</a>
+        </form>
+    </div>
+</div>
+{% endblock %}

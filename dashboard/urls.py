@@ -26,5 +26,10 @@ urlpatterns = [
     path('requests/deny/<int:message_id>/', views.deny_request, name='deny_request'),
     path('requests/remove/<int:message_id>/', views.remove_request, name='remove_request'),
     path('view_request_student/', views.view_request_student, name='view_request_student'),
-
+    path('reserve-studio/', views.reserve_studio, name='reserve_studio'),
+    path('approve_reservation/<int:reservation_id>/', views.approve_reservation, name='approve_reservation'),
+    path('deny_reservation/<int:reservation_id>/', views.deny_reservation, name='deny_reservation'),
+    path('remove_reservation/<int:reservation_id>/', views.remove_reservation, name='remove_reservation'),
+    path('remove_request_student/<int:message_id>/', views.remove_request_student, name='remove_request_student'),
+    path('remove_reservation_student/<int:reservation_id>/', views.remove_reservation_student, name='remove_reservation_student'),
 ]

@@ -45,6 +45,8 @@ class Order(models.Model):
         return self.returnDate - timedelta(days=1)
     def current_date(self):
         return timezone.now().date()
+    def __str__(self):
+        return f'{self.product.name} - {self.quantity} units'
 
 
 class DamageReport(models.Model):
@@ -63,3 +65,17 @@ class Message(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.CharField(max_length=10, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('Finished', 'Finished')), default='Pending')
     is_visible_to_manager = models.BooleanField(default=True)
+    is_visible_to_student = models.BooleanField(default=True)
+
+
+class Reservation(models.Model):
+    customer = models.ForeignKey(User, on_delete=models.CASCADE)
+    date = models.DateField()
+    message = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    status = models.CharField(max_length=10, choices=(('Pending', 'Pending'), ('Approved', 'Approved'), ('Denied', 'Denied'),('Finished', 'Finished')), default='Pending')
+    is_visible_to_manager = models.BooleanField(default=True)
+    is_visible_to_student = models.BooleanField(default=True)
+
+    def __str__(self):
+        return f'Studio Reservation on {self.date}'

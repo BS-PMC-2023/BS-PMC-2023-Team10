@@ -59,9 +59,9 @@ class OrderTestCase(TestCase):
 
 
     def test_order_string_representation(self):
-        """Test the __str__ method of the Order model."""
-        expected_string = 'Order object (1)'
-        self.assertEqual(str(self.order), expected_string) 
+        
+        expected_str = f'{self.product} - {self.order.quantity} units'
+        self.assertEqual(str(self.order), expected_str) 
 
 
 

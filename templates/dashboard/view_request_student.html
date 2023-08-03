@@ -18,35 +18,73 @@
             <h4>My Requests</h4>
         </div>
         <div class="card-body">
-            {% if messages %}
+            {% if messages or reservations %}
                 <table class="table bg-white">
                     <thead class="bg-primary text-white">
                         <tr>
                             <th scope="col">Request ID</th>
-                            <th scope="col">Product</th>
+                            <th scope="col">Product / Reservation</th>
                             <th scope="col">Message</th>
                             <th scope="col">Created At</th>
                             <th scope="col">Status</th>
+                            <th scope="col">Actions</th> <!-- Add this column -->
                         </tr>
                     </thead>
                     <tbody>
                         {% for message in messages %}
-                            <tr>
-                                <td>{{ message.id }}</td>
-                                <td>{{ message.product.name }}</td>
-                                <td>{{ message.message }}</td>
-                                <td>{{ message.created_at }}</td>
-                                <td>
-                                    <span class="
-                                    {% if message.status == 'Approved' %}text-success font-weight-bold
-                                    {% elif message.status == 'Denied' %}text-danger font-weight-bold
-                                    {% elif message.status == 'Pending' %}text font-weight-bold
-                                    {% endif %}">
-                                    {{ message.status }}
-                                    </span>
-                                  
-                                  </td>
-                            </tr>
+                            {% if message.is_visible_to_student %}
+                                <tr>
+                                    <td>{{ message.id }}</td>
+                                    <td>{{ message.product.name }}</td>
+                                    <td>{{ message.message }}</td>
+                                    <td>{{ message.created_at }}</td>
+                                    <td>
+                                        <span class="
+                                        {% if message.status == 'Approved' %}text-success font-weight-bold
+                                        {% elif message.status == 'Denied' %}text-danger font-weight-bold
+                                        {% elif message.status == 'Pending' %}text font-weight-bold
+                                        {% endif %}">
+                                        {{ message.status }}
+                                        </span>
+                                    </td>
+                                    <td>
+                                        {% if message.status == 'Approved' or message.status == 'Denied' %}
+                                        <form method="post" action="{% url 'remove_request_student' message.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary btn-sm">Remove</button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% for reservation in reservations %}
+                            {% if reservation.is_visible_to_student %}
+                                <tr>
+                                    <td>{{ reservation.id }}</td>
+                                    <td>Studio Reservation on {{ reservation.date|date:"d/m/Y" }}</td>
+                                    <td>{{ reservation.message }}</td>
+                                    <td>{{ reservation.created_at }}</td>
+                                    <td>
+                                        <span class="
+                                        {% if reservation.status == 'Approved' %}text-success font-weight-bold
+                                        {% elif reservation.status == 'Denied' %}text-danger font-weight-bold
+                                        {% elif reservation.status == 'Pending' %}text font-weight-bold
+                                        {% endif %}">
+                                        {{ reservation.status }}
+                                        </span>
+                                    </td>
+                                    <td> <!-- Add the Remove button here -->
+                                        {% if reservation.status == 'Approved' or reservation.status == 'Denied' %}
+                                        <form method="post" action="{% url 'remove_reservation_student' reservation.id %}" style="display: inline;">
+                                            {% csrf_token %}
+                                            <button type="submit" class="btn btn-primary btn-sm">Remove</button>
+                                        </form>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endif %}
                         {% endfor %}
                     </tbody>
                 </table>

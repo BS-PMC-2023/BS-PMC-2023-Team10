@@ -1,5 +1,5 @@
 from django import forms
-from .models import Product,Order,DamageReport
+from .models import Product,Order,DamageReport,Reservation
 from django.forms import TextInput
 from django.core.exceptions import ValidationError
 
@@ -21,7 +21,6 @@ class ProductForm(forms.ModelForm):
 
 
 class OrderForm(forms.ModelForm):
-    # signature = forms.ImageField(required=False)
     class Meta:
         model = Order
         fields = ['category', 'product', 'quantity', 'returnDate']
@@ -76,11 +75,6 @@ class OrderForm(forms.ModelForm):
         if 'product' in self._errors:
             self._errors['product'].clear()
             del self._errors['product']
-    
-    """def clean_signature(self):
-        signature = self.cleaned_data['signature']
-        # Implement any validation or checks for the signature field if needed
-        return signature"""
 
 
 
@@ -99,3 +93,12 @@ class DamageReportForm(forms.ModelForm):
             self.fields['item'].widget.attrs['readonly'] = True
             self.initial['item'] = product_name
 
+
+class ReservationForm(forms.ModelForm):
+    class Meta:
+        model = Reservation
+        fields = ['date', 'message']
+        widgets = {
+            'date': forms.DateInput(attrs={'type': 'date'}),
+            'message': forms.Textarea(attrs={'rows': 4}),
+        }

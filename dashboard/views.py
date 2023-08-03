@@ -1,8 +1,8 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.http import HttpResponse
-from .models import Product,Order,DamageReport,Message
-from .forms import ProductForm,OrderForm,DamageReportForm
+from .models import Product,Order,DamageReport,Message,Reservation
+from .forms import ProductForm,OrderForm,DamageReportForm,ReservationForm
 from .resources import ProductResource,OrderResource
 from django.db.models import F
 from django.contrib import messages
@@ -24,10 +24,61 @@ def staff_required(view_func):
 
 # Create your views here.
 
+def reserve_studio(request):
+    if request.method == 'POST':
+        form = ReservationForm(request.POST)
+        if form.is_valid():
+            reservation = form.save(commit=False)
+            reservation.customer = request.user
+            reservation.save()
+            return redirect('dashboard-index')
+    else:
+        form = ReservationForm()
+
+    return render(request, 'dashboard/reserve_studio.html', {'form': form})
+
+@staff_required
+def approve_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if request.method == 'POST':
+        reservation.status = 'Approved'
+        reservation.save()
+        return redirect('view_request')
+    return render(request, 'dashboard/view_request.html', {'reservation': reservation})
+
+
+@staff_required
+def deny_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if request.method == 'POST':
+        reservation.status = 'Denied'
+        reservation.save()
+        return redirect('view_request')
+    return render(request, 'dashboard/view_request.html', {'reservation': reservation})
+
+
+@staff_required
+def remove_reservation(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if request.method == 'POST':
+        reservation.is_visible_to_manager = False
+        reservation.save()
+        return redirect('view_request')
+    return render(request, 'dashboard/view_request.html', {'reservation': reservation})
+
+
+def remove_reservation_student(request, reservation_id):
+    reservation = get_object_or_404(Reservation, id=reservation_id)
+    if request.method == 'POST':
+        reservation.is_visible_to_student = False
+        reservation.save()
+        return redirect('view_request_student')
+    return render(request, 'dashboard/view_request_student.html', {'reservation': reservation})
+
 def view_request_student(request):
     messages = Message.objects.filter(customer=request.user)  # Filter messages by the current user
-    
-    return render(request, 'dashboard/view_request_student.html', {'messages': messages})
+    reservations = Reservation.objects.filter(customer=request.user)
+    return render(request, 'dashboard/view_request_student.html', {'messages': messages, 'reservations': reservations})
 
 @staff_required
 def remove_request(request, message_id):
@@ -38,13 +89,23 @@ def remove_request(request, message_id):
         return redirect('view_request')
     return render(request, {'message': message})
 
+def remove_request_student(request, message_id):
+    message = get_object_or_404(Message, pk=message_id)
+    if request.method == 'POST':
+        message.is_visible_to_student = False
+        message.save()
+        return redirect('view_request_student')
+    return render(request, {'message': message})
+
 
 @staff_required
 def view_request(request):
     if not request.user.is_staff:
         raise PermissionDenied
     messages = Message.objects.all()
-    return render(request, 'dashboard/view_request.html', {'messages': messages})
+    reservations = Reservation.objects.all()
+
+    return render(request, 'dashboard/view_request.html', {'messages': messages, 'reservations': reservations})
 
 
 
@@ -63,6 +124,23 @@ def send_request(request):
         return redirect('dashboard-index')
 
     return render(request, 'dashboard/send_request.html', {'products': products})
+
+
+def reserve_request(request):
+    products = Product.objects.all()
+    
+    if request.method == 'POST':
+        product_id = request.POST.get('product')
+        product = get_object_or_404(Product, pk=product_id)
+        message = request.POST.get('message')
+        Message.objects.create(
+            customer=request.user,
+            product=product,
+            message=message
+        )
+        return redirect('dashboard-index')
+
+    return render(request, 'dashboard/reserve_request.html', {'products': products})
 
 @staff_required
 def approve_request(request, message_id):
